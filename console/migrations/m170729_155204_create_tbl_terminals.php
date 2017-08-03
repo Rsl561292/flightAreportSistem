@@ -15,7 +15,7 @@ class m170729_155204_create_tbl_terminals extends Migration
         $this->createTable('{{%terminals}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->comment('Повне найменування терміналу'),
-            'symbol' => $this->string()->notNull()->unique()->comment('Символьне позначення'),
+            'symbol' => $this->char(1)->notNull()->unique()->comment('Символьне позначення'),
             'year_built' => $this->char(1)->comment('Рік побудови'),
             'status' => $this->char(1)->notNull()->comment('Статус'),
             'area' => $this->float()->comment('Площа терміналу'),
