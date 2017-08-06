@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m170803_145815_create_tbl_registration_desk extends Migration
+class m170805_103745_create_tbl_cargo extends Migration
 {
     public function up()
     {
@@ -11,18 +11,22 @@ class m170803_145815_create_tbl_registration_desk extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%registration_desk}}', [
+        $this->createTable('{{%cargo}}', [
             'id' => $this->primaryKey(),
-            'symbol' => $this->string(5)->notNull()->unique(),
-            'terminal_id' => $this->integer(11),
-            'status' => $this->char(2)->notNull()->defaultValue('2'),
+            'weight' => $this->float()->notNull(),
+            'is_live' => $this->char(1)->notNull()->defaultValue('0'),
+            'status_location' => $this->char(2)->notNull(),
+            'width' => $this->float(),
+            'length' => $this->float(),
+            'height' => $this->float(),
+            'owner_and_address' => $this->string(),
             'description' => $this->text(),
         ], $tableOptions);
     }
 
     public function down()
     {
-        $this->dropTable('{{%registration_desk}}');
+        $this->dropTable('{{%cargo}}');
     }
 
     /*
@@ -34,7 +38,7 @@ class m170803_145815_create_tbl_registration_desk extends Migration
 
     public function down()
     {
-        echo "m170803_145815_create_tbl_registration_desk cannot be reverted.\n";
+        echo "m170805_103745_create_tbl_cargo cannot be reverted.\n";
 
         return false;
     }

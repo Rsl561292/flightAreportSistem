@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m170803_145815_create_tbl_registration_desk extends Migration
+class m170805_110137_create_tbl_cargo_to_flight extends Migration
 {
     public function up()
     {
@@ -11,18 +11,16 @@ class m170803_145815_create_tbl_registration_desk extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%registration_desk}}', [
+        $this->createTable('{{%cargo_to_flight}}', [
             'id' => $this->primaryKey(),
-            'symbol' => $this->string(5)->notNull()->unique(),
-            'terminal_id' => $this->integer(11),
-            'status' => $this->char(2)->notNull()->defaultValue('2'),
-            'description' => $this->text(),
+            'cargo_id' => $this->integer(11)->notNull(),
+            'flight_id' => $this->integer(11)->notNull()
         ], $tableOptions);
     }
 
     public function down()
     {
-        $this->dropTable('{{%registration_desk}}');
+        $this->dropTable('{{%cargo_to_flight}}');
     }
 
     /*
@@ -34,7 +32,7 @@ class m170803_145815_create_tbl_registration_desk extends Migration
 
     public function down()
     {
-        echo "m170803_145815_create_tbl_registration_desk cannot be reverted.\n";
+        echo "m170805_110137_create_tbl_cargo_to_flight cannot be reverted.\n";
 
         return false;
     }
