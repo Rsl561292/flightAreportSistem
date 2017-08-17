@@ -6,6 +6,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use employee\assets\BaseEmployeeAsset;
 use common\widgets\Alert;
@@ -29,19 +30,24 @@ BaseEmployeeAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Flight',
+        'brandLabel' => 'Flight for workers',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
+        ['label' => 'Home', 'url' => [Url::toRoute('default/index')]],
+        ['label' => 'News', 'url' => [Url::toRoute('default/news')]],
     ];
-    $menuItems[] = ['label' => 'Signup', 'url' => ['/auth/sign-up']];
-    $menuItems[] = ['label' => 'Signin', 'url' => ['/auth/sign-in']];
-
+    $menuItems[] = '<li>'
+        . Html::beginForm(['/auth/logout'], 'post')
+        . Html::submitButton(
+            'Logout (' . Yii::$app->user->identity->username . ')',
+            ['class' => 'btn btn-link logout']
+        )
+        . Html::endForm()
+        . '</li>';
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
@@ -60,7 +66,7 @@ BaseEmployeeAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; Flight <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>

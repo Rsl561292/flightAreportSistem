@@ -1,13 +1,13 @@
 <?php
 
-namespace frontend\assets;
+namespace employee\assets;
 
 use yii\web\AssetBundle;
 
 /**
- * Main frontend application asset bundle.
+ * Main employee application asset bundle.
  */
-class AppAsset extends AssetBundle
+class BaseEmployeeAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
