@@ -17,6 +17,9 @@ return [
         'workers' => [
             'class' => 'employee\modules\workers\Module',
         ],
+        'workroom' => [
+            'class' => 'employee\modules\workroom\Module',
+        ],
     ],
     'components' => [
         'request' => [

@@ -29,18 +29,22 @@ BaseEmployeeAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Flight',
+        'brandLabel' => 'СКП',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
+        ['label' => 'Головна', 'url' => ['/site/index']],
+        ['label' => 'Про сайт', 'url' => ['/site/about']],
+        ['label' => 'Вхід',
+            'items' => [
+                ['label' => 'Реєстрація', 'url' => ['/auth/sign-up']],
+                ['label' => 'Вхід', 'url' => ['/auth/sign-in']],
+            ]
+        ],
     ];
-    $menuItems[] = ['label' => 'Signup', 'url' => ['/auth/sign-up']];
-    $menuItems[] = ['label' => 'Signin', 'url' => ['/auth/sign-in']];
 
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
@@ -60,7 +64,7 @@ BaseEmployeeAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; СКП <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>

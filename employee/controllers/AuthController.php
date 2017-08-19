@@ -103,6 +103,10 @@ class AuthController extends Controller
      */
     public function actionSignUp()
     {
+        if (!Yii::$app->user->isGuest) {
+            return $this->redirect('/workers');
+        }
+
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
@@ -127,11 +131,11 @@ class AuthController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', 'Перевірте свою електронну пошту для подальших інструкцій.');
 
                 return $this->goHome();
             } else {
-                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+                Yii::$app->session->setFlash('error', 'Вибачте, ми не можемо скинути пароль для вказаної електронної адреси.');
             }
         }
 
@@ -156,7 +160,7 @@ class AuthController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
+            Yii::$app->session->setFlash('success', 'Новий пароль збережено.');
 
             return $this->goHome();
         }

@@ -25,6 +25,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        if (!Yii::$app->user->isGuest) {
+            return $this->redirect('/workers');
+        }
+
         return $this->render('index');
     }
 
@@ -35,7 +39,6 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        echo 'Profv';
         return $this->render('about');
     }
 }

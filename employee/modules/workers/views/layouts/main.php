@@ -30,24 +30,30 @@ BaseEmployeeAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Flight for workers',
+        'brandLabel' => 'СКП',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => [Url::toRoute('default/index')]],
-        ['label' => 'News', 'url' => [Url::toRoute('default/news')]],
+        ['label' => 'Головна', 'url' => [Url::toRoute('default/index')]],
+        ['label' => 'Новини', 'url' => [Url::toRoute('default/news')]],
+        ['label' => Yii::$app->user->identity->username ,
+            'items' => [
+                ['label' => 'Робочий кабінет', 'url' => [Url::to('/workroom')]],
+                '<li id="logout">'
+                . Html::beginForm(['/auth/logout'], 'post')
+                . Html::submitButton(
+                    'Вихід з акаунту',
+                    ['class' => 'btn btn-link logout']
+                )
+                . Html::endForm()
+                . '</li>',
+            ]
+        ]
     ];
-    $menuItems[] = '<li>'
-        . Html::beginForm(['/auth/logout'], 'post')
-        . Html::submitButton(
-            'Logout (' . Yii::$app->user->identity->username . ')',
-            ['class' => 'btn btn-link logout']
-        )
-        . Html::endForm()
-        . '</li>';
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
@@ -66,7 +72,7 @@ BaseEmployeeAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; Flight <?= date('Y') ?></p>
+        <p class="pull-left">&copy; СКП <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
