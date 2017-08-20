@@ -13,6 +13,9 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'employee\controllers',
+    'aliases' => [
+        '@adminlte/widgets'=>'@vendor/adminlte/yii2-widgets'
+    ],
     'modules' => [
         'workers' => [
             'class' => 'employee\modules\workers\Module',

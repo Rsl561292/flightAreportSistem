@@ -1,7 +1,7 @@
 <?php
 
 namespace employee\modules\workroom\controllers;
-
+use Yii;
 use yii\web\Controller;
 
 /**

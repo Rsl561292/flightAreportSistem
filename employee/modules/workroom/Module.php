@@ -19,6 +19,7 @@ class Module extends \yii\base\Module
     {
         parent::init();
 
+        $this->layout = '@employee/modules/workroom/views/layouts/main';
         // custom initialization code goes here
     }
 }
