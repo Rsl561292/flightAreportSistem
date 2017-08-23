@@ -42,14 +42,7 @@ BaseEmployeeAsset::register($this);
         ['label' => Yii::$app->user->identity->username ,
             'items' => [
                 ['label' => 'Робочий кабінет', 'url' => [Url::to('/workroom')]],
-                '<li id="logout">'
-                . Html::beginForm(['/auth/logout'], 'post')
-                . Html::submitButton(
-                    'Вихід з акаунту',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>',
+                ['label' => 'Вихід з СКП', 'url' => [Url::to('/auth/logout')]],
             ]
         ]
     ];

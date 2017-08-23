@@ -28,29 +28,26 @@ use yii\helpers\Html;
                   <li class="user-header">
                     <?= Html::img('@web/img/user2-160x160.jpg', ['class' => 'img-circle', 'alt'=>'User Image']) ?>
                     <p>
-                      <?= Yii::$app->user->identity->username?> - Web Developer
-                      <small>Member since Nov. 2012</small>
+                      <?= Yii::$app->user->identity->username?> - Веб розробник
+                      <small>Зареєстрований в системі 22.08.2017</small>
                     </p>
                   </li>
                   <!-- Menu Body -->
                   <li class="user-body">
-                    <div class="col-xs-4 text-center">
-                      <a href="#">Followers</a>
+                    <div class="col-xs-6 text-center">
+                      <?= Html::a('Налаштування системи', ['default/setting-system'])?>
                     </div>
-                    <div class="col-xs-4 text-center">
-                      <a href="#">Sales</a>
-                    </div>
-                    <div class="col-xs-4 text-center">
-                      <a href="#">Friends</a>
+                    <div class="col-xs-6 text-center">
+                      <?= Html::a('Налаштування профілю', ['default/setting-profile'])?>
                     </div>
                   </li>
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="#" class="btn btn-default btn-flat">Profile</a>
+                      <?= Html::a('Сайт СКП', ['/workers'],['class' => 'btn btn-default btn-flat'])?>
                     </div>
                     <div class="pull-right">
-                      <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                      <?= Html::a('Вихід з СКП', ['/auth/logout'],['class' => 'btn btn-default btn-flat'])?>
                     </div>
                   </li>
                 </ul>

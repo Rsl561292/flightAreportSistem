@@ -12,7 +12,7 @@ $this->title = 'СКП | Вхід';
 <div class="site-login">
     <h1>Вхід</h1>
 
-    <p>Будь ласка, заповніть наступні поля для входу на сайт:</p>
+    <p>Будь ласка, заповніть наступні поля для входу на СКП аеропорту "Бориспіль":</p>
 
     <div class="row">
         <div class="col-lg-5">
@@ -25,7 +25,8 @@ $this->title = 'СКП | Вхід';
                 <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
                 <div style="color:#999;margin:1em 0">
-                    Якщо ви забули свій пароль --  <?= Html::a('натисніть сюди', ['auth/request-password-reset']) ?>.
+                    Якщо ви забули свій пароль --  <?= Html::a('натисніть сюди', ['auth/request-password-reset']) ?>,
+                    якщо ж ви ще не зареєстровані в СКП аеропорта "Бориспіль", то ви можете зробити це <?= Html::a('тут', ['auth/request-password-reset']) ?>.
                 </div>
 
                 <div class="form-group">
