@@ -25,8 +25,8 @@ use yii\helpers\Url;
                     'options' => ['class' => 'sidebar-menu'],
                     'items' => [
                         ['label' => 'Menu', 'options' => ['class' => 'header']],
-                        ['label' => 'Dashboard', 'icon' => 'fa fa-dashboard', 
-                            'url' => ['/'], 'active' => $this->context->route == 'site/index'
+                        ['label' => 'Панель приладів', 'icon' => 'fa fa-dashboard',
+                            'url' => ['default/index'], 'active' => $this->context->route == 'default/index'
                         ],
                         [
                             'label' => 'Master',
