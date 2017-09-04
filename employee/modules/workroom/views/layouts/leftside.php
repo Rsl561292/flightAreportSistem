@@ -29,15 +29,15 @@ use yii\helpers\Url;
                             'url' => ['default/index'], 'active' => $this->context->route == 'default/index'
                         ],
                         [
-                            'label' => 'Master',
-                            'icon' => 'fa fa-database',
+                            'label' => 'Інфраструктура',
+                            'icon' => 'fa fa-building-o',
                             'url' => '#',
                             'items' => [
                                 [
-                                    'label' => 'Master1',
-                                    'icon' => 'fa fa-database',
-                                    'url' => '?r=master1/',
-				    'active' => $this->context->route == 'master1/index'
+                                    'label' => 'Термінали',
+                                    'icon' => 'fa fa-building-o',
+                                    'url' => ['terminals/index'],
+				    'active' => $this->context->route == 'terminals/index'
                                 ],
                                 [
                                     'label' => 'Master2',

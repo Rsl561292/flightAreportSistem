@@ -5,9 +5,9 @@ use yii\helpers\Html;
         <!-- Logo -->
         <?= Html::a('
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>'.$this->title.'</b></span>
+                <span class="logo-mini"><b>СКП</b></span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>'.$this->title.'</b> | Кабінет</span>
+                <span class="logo-lg"><b>СКП</b> | Кабінет</span>
         ', ['default/index'], ['class' => 'logo'])?>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">

@@ -1,4 +1,6 @@
 <?php
+
+use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use yii\widgets\AlertLte;
 
@@ -7,22 +9,20 @@ use yii\widgets\AlertLte;
 	  <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-			<?php if (isset($this->blocks['content-header'])) { ?>
-				<h1><?/*= $this->blocks['content-header'] */
-					?></h1>
-			<?php } else { ?>
-				<h1>
-					<?//php
-/*					if ($this->title !== null) {
-						echo \yii\helpers\Html::encode($this->title);
-					} else {
-						echo \yii\helpers\Inflector::camel2words(
-							\yii\helpers\Inflector::id2camel($this->context->module->id)
-						);
-						echo ($this->context->module->id !== \Yii::$app->id) ? '<small>Module</small>' : '';
-					} */?>
-				</h1>
-			<?php } ?>
+			<h1>
+				<?php
+					if(isset($this->params['inscription_object_title'])) {
+						echo Html::encode($this->params['inscription_object_title']);
+					}
+				?>
+				<small>
+					<?php
+						if(isset($this->params['inscription_object_explanation'])) {
+							echo Html::encode($this->params['inscription_object_explanation']);
+						}
+					?>
+				</small>
+			</h1>
 
 			<?=
 			Breadcrumbs::widget([
@@ -32,6 +32,22 @@ use yii\widgets\AlertLte;
 
         <!-- Main content -->
         <section class="content">
+			<?php if(Yii::$app->session->hasFlash('success')):?>
+				<div class="alert alert-success alert-dismissible">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+					<h4><i class="icon fa fa-check"></i> Успіх!</h4>
+					<?= Yii::$app->session->getFlash('success');?>
+				</div>
+			<?php else:?>
+				<?php if(Yii::$app->session->hasFlash('error')):?>
+					<div class="alert alert-danger alert-dismissible">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+						<h4><i class="icon fa fa-ban"></i> Помилка!</h4>
+						<?= Yii::$app->session->getFlash('error');?>
+					</div>
+				<?php endif;?>
+			<?php endif;?>
+
 			<?= $content ?>
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
