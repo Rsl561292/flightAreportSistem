@@ -7,13 +7,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\data\ActiveDataProvider;
 use common\models\Terminals;
 use employee\modules\workroom\models\search\TerminalsSearch;
 
-/**
- * TerminalsController implements the CRUD actions for Terminals model.
- */
 class TerminalsController extends Controller
 {
     /**
