@@ -5,6 +5,7 @@ use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
 use dosamigos\ckeditor\CKEditor;
 use kartik\date\DatePicker;
+use kartik\select2\Select2;
 use common\models\Terminals;
 
 /* @var $this yii\web\View */
@@ -98,9 +99,17 @@ use common\models\Terminals;
                                     </div>
                                     <div class="col-sm-5 col-lg-5">
                                         <div class="box-margin-left-10px">
-                                            <?= $form->field($model, 'status')->dropDownList(Terminals::getStatusList(), [
-                                                'class' => 'form-control'
-                                            ]) ?>
+                                            <?= $form->field($model, 'status')->widget(Select2::className(),[
+                                                'class' => 'form-control',
+                                                'hideSearch' => true,
+                                                'data' => Terminals::getStatusList(),
+                                                'options' => [
+                                                    'placeholder' => 'Виберіть список...',
+                                                    'options' => [
+                                                        'allowClear' => true
+                                                    ]
+                                                ],
+                                            ]); ?>
                                         </div>
                                     </div>
                                 </div>

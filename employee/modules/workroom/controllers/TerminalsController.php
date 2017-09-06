@@ -119,7 +119,7 @@ class TerminalsController extends Controller
 
                 return $this->redirect(['update', 'id' => $model->id]);
             } else {
-                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про термінал "'.$model->name.'", була успішно збережена.'.(strtotime($model->year_built) > mktime(0,0,0) ? 'Works' : 'No workers'));
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про термінал "'.$model->name.'", була успішно збережена.');
 
                 return $this->redirect(['index']);
             }
