@@ -14,13 +14,15 @@ class m170803_140632_create_tbl_platform extends Migration
 
         $this->createTable('{{%platform}}', [
             'id' => $this->primaryKey(),
-            'symbol' => $this->char(2)->notNull()->unique(),
+            'symbol' => $this->char(4)->notNull()->unique(),
             'terminal_id' => $this->integer(11),
             'name' => $this->string(),
-            'status' => $this->char(2)->notNull()->defaultValue('0'),
-            'type_connecting' => $this->char(2)->notNull()->defaultValue('2'),
+            'status' => $this->char(2)->notNull()->defaultValue('1'),
+            'type_connecting' => $this->char(2)->notNull()->defaultValue('3'),
             'width' => $this->float()->notNull(),
             'length' => $this->float()->notNull(),
+            'created_at' => $this->dateTime()->notNull(),
+            'updated_at' => $this->dateTime()->notNull(),
         ], $tableOptions);
     }
 
