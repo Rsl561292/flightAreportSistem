@@ -7,12 +7,12 @@ use yii\helpers\Html;
 //use app\assets\AppAsset;
 use employee\assets\BackendAsset;
 use employee\assets\AdminLteAsset;
-use employee\assets\BaseEmployeeAsset;
+use employee\assets\AppAsset;
 
 //AppAsset::register($this);
 BackendAsset::register($this);
 $asset      = AdminLteAsset::register($this);
-BaseEmployeeAsset::register($this);
+AppAsset::register($this);
 $baseUrl    = $asset->baseUrl;
 
 ?>

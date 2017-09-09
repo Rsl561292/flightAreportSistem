@@ -7,7 +7,7 @@ use yii\web\AssetBundle;
 /**
  * Main employee application asset bundle.
  */
-class BaseEmployeeAsset extends AssetBundle
+class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';

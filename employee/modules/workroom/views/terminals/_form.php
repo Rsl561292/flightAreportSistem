@@ -89,7 +89,9 @@ use common\models\Terminals;
                                         <div class="box-margin-left-10px">
                                             <?= $form->field($model, 'year_built')->widget(DatePicker::className(),[
                                                 'name' => 'check_issue_date',
-                                                'options' => ['placeholder' => 'Select issue date ...'],
+                                                'options' => [
+                                                    'placeholder' => 'Виберіть дату побудови ...'
+                                                ],
                                                 'pluginOptions' => [
                                                     'format' => 'yyyy-mm-dd',
                                                     'todayHighlight' => true
@@ -104,7 +106,7 @@ use common\models\Terminals;
                                                 'hideSearch' => true,
                                                 'data' => Terminals::getStatusList(),
                                                 'options' => [
-                                                    'placeholder' => 'Виберіть список...',
+                                                    'placeholder' => 'Виберіть статус ...',
                                                     'options' => [
                                                         'allowClear' => true
                                                     ]
