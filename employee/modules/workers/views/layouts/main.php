@@ -9,10 +9,10 @@ use yii\bootstrap\NavBar;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
-use employee\assets\BaseEmployeeAsset;
+use employee\assets\AppAsset;
 use common\widgets\Alert;
 
-BaseEmployeeAsset::register($this);
+AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

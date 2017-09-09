@@ -2,12 +2,13 @@
 
 namespace employee\modules\workroom\models\search;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\RegistrationDesk;
 
 /**
- * TerminalsSearch represents the model behind the search form about `common\models\Terminals`.
+ * RegistrationDeskSearch represents the model behind the search form about `common\models\RegistrationDesk`.
  */
 class RegistrationDeskSearch extends RegistrationDesk
 {
@@ -20,12 +21,10 @@ class RegistrationDeskSearch extends RegistrationDesk
     public function rules()
     {
         return [
-            [['id', 'pageSize'], 'integer'],
-            [['area'], 'number'],
+            [['id', 'pageSize', 'terminal_id'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 255],
-            [['symbol', 'status'], 'string', 'max' => 2],
-            ['year_built', 'date'],
+            [['symbol'], 'string', 'max' => 5],
+            [['status'], 'string', 'max' => 2],
         ];
     }
 
@@ -50,13 +49,13 @@ class RegistrationDeskSearch extends RegistrationDesk
      */
     public function search($params)
     {
-        $query = Terminals::find();
+        $query = RegistrationDesk::find()
+            ->with('terminals');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => false,
             'sort' => [
                 'defaultOrder' => [
                     'symbol' => SORT_ASC,
@@ -66,6 +65,8 @@ class RegistrationDeskSearch extends RegistrationDesk
 
         $this->load($params);
 
+        $dataProvider->pagination->pageSize = $this->pageSize !== null ? $this->pageSize : Yii::$app->params['employee.gridView.pagination.pageSizeLimit.default'];
+
         if (!$this->validate()) {
             return $dataProvider;
         }
@@ -74,12 +75,10 @@ class RegistrationDeskSearch extends RegistrationDesk
         $query->andFilterWhere([
             'id' => $this->id,
             'status' => $this->status,
-            'symbol' => $this->symbol,
-            'area' => $this->area,
-            'year_built' => $this->year_built,
+            'terminal_id' => $this->terminal_id,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
+        $query->andFilterWhere(['like', 'symbol', $this->symbol])
             ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;

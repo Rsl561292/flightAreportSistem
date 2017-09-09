@@ -37,18 +37,17 @@ use yii\helpers\Url;
                                     'label' => 'Термінали',
                                     'icon' => 'fa fa-building-o',
                                     'url' => ['terminals/index'],
-				    'active' => $this->context->route == 'terminals/index'
+				                    'active' => $this->context->route == 'terminals/index'
                                 ],
                                 [
-                                    'label' => 'Master2',
-                                    'icon' => 'fa fa-database',
-                                    'url' => '?r=master2/',
-				    'active' => $this->context->route == 'master2/index'
-                                ]
+                                    'label' => 'Реєстр. стійки',
+                                    'icon' => 'fa fa-building-o',
+                                    'url' => ['registration-desk/index'],
+                                    'active' => $this->context->route == 'registration-desk/index'
+                                ],
                             ]
                         ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
-                        ['label' => 'Debug', 'icon' => 'fa fa-dashboard', 'url' => ['/debug'],],
                     ],
                 ]
         )

@@ -3,11 +3,13 @@
 namespace employee\modules\workroom\controllers;
 
 use Yii;
-use common\models\RegistrationDesk;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use common\models\RegistrationDesk;
+use employee\modules\workroom\models\search\RegistrationDeskSearch;
 
 /**
  * RegistrationDeskController implements the CRUD actions for RegistrationDesk model.
@@ -20,6 +22,21 @@ class RegistrationDeskController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'index',
+                            'create',
+                            'update',
+                            'delete',
+                        ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -35,11 +52,12 @@ class RegistrationDeskController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => RegistrationDesk::find(),
-        ]);
+        $searchModel = new RegistrationDeskSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -58,7 +76,7 @@ class RegistrationDeskController extends Controller
 
     /**
      * Creates a new RegistrationDesk model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      * @return mixed
      */
     public function actionCreate()
@@ -66,17 +84,27 @@ class RegistrationDeskController extends Controller
         $model = new RegistrationDesk();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Інформація про цю нову реєстраційну стійку, була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Інформація про нову реєстраційну стійку під назвою \'' . $model->symbol . '\', була успішно збережена.');
+
+                return $this->redirect(['index']);
+
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
      * Updates an existing RegistrationDesk model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
@@ -85,12 +113,21 @@ class RegistrationDeskController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про цю реєстраційну стійку була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про реєстраційну стійку \''.$model->symbol.'\', була успішно збережена.');
+
+                return $this->redirect(['index']);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -101,7 +138,13 @@ class RegistrationDeskController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $symbol = $model->symbol;
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Запис про реєстраційну стійку з позначенням \''.$symbol.'\' було успішно видалено.');
+        }
 
         return $this->redirect(['index']);
     }
@@ -118,7 +161,7 @@ class RegistrationDeskController extends Controller
         if (($model = RegistrationDesk::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException('Запрошеної сторінки не існує.');
         }
     }
 }

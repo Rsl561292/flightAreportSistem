@@ -1,18 +1,15 @@
 <?php
 
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
 /* @var $model common\models\RegistrationDesk */
 
-$this->title = 'Update Registration Desk: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Registration Desks', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Редагування інформації';
+$this->params['breadcrumbs'][] = ['label' => 'Реєстр. стійки', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+$this->params['inscription_object_title'] = 'Реєстр. стійки';
+$this->params['inscription_object_explanation'] = 'Редагування інформації';
 ?>
 <div class="registration-desk-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
