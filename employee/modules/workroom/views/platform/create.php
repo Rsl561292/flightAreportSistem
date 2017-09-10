@@ -1,18 +1,15 @@
 <?php
 
-use yii\helpers\Html;
-
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Platform */
 
-$this->title = 'Create Platform';
-$this->params['breadcrumbs'][] = ['label' => 'Platforms', 'url' => ['index']];
+$this->title = 'Додати нову посад. платформу';
+$this->params['breadcrumbs'][] = ['label' => 'Посад. платформи', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['inscription_object_title'] = 'Посад. платформи';
+$this->params['inscription_object_explanation'] = 'Додавання посад. платформи';
 ?>
 <div class="platform-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

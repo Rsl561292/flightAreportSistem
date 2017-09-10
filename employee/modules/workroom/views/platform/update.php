@@ -1,18 +1,15 @@
 <?php
 
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Platform */
 
-$this->title = 'Update Platform: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Platforms', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Редагування інформації';
+$this->params['breadcrumbs'][] = ['label' => 'Посад. платформи', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+$this->params['inscription_object_title'] = 'Посад. платформи';
+$this->params['inscription_object_explanation'] = 'Редагування інформації';
 ?>
 <div class="platform-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

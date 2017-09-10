@@ -19,10 +19,11 @@ class m170803_140632_create_tbl_platform extends Migration
             'name' => $this->string(),
             'status' => $this->char(2)->notNull()->defaultValue('1'),
             'type_connecting' => $this->char(2)->notNull()->defaultValue('3'),
-            'width' => $this->float()->notNull(),
-            'length' => $this->float()->notNull(),
-            'created_at' => $this->dateTime()->notNull(),
-            'updated_at' => $this->dateTime()->notNull(),
+            'width' => $this->float(),
+            'length' => $this->float(),
+            'description' => $this->text(),
+            'created_at' => $this->dateTime(),
+            'updated_at' => $this->dateTime(),
         ], $tableOptions);
     }
 

@@ -4,7 +4,6 @@ namespace common\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
-use common\models\RegistrationDesk;
 
 /**
  * This is the model class for table "tbl_terminals".
@@ -55,11 +54,6 @@ class Terminals extends \yii\db\ActiveRecord
         }
     }
 
-    public function getRegistrationDesk()
-    {
-        return $this->hasMany(RegistrationDesk::className(), ['terminal_id' => 'id']);
-    }
-
     /**
      * @inheritdoc
      */
@@ -74,6 +68,16 @@ class Terminals extends \yii\db\ActiveRecord
             'area' => 'Площа',
             'description' => 'Опис',
         ];
+    }
+
+    public function getRegistrationDesk()
+    {
+        return $this->hasMany(RegistrationDesk::className(), ['terminal_id' => 'id']);
+    }
+
+    public function getPlatform()
+    {
+        return $this->hasMany(Platform::className(), ['terminal_id' => 'id']);
     }
 
     public static function getStatusList()

@@ -5,7 +5,6 @@ namespace employee\modules\workroom\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use common\models\RegistrationDesk;

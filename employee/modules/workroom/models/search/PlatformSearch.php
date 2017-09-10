@@ -22,9 +22,12 @@ class PlatformSearch extends Platform
     {
         return [
             [['id', 'pageSize', 'terminal_id'], 'integer'],
+            [['width', 'length'], 'number'],
+            [['symbol'], 'string', 'max' => 4],
+            [['name'], 'string', 'max' => 255],
+            [['status', 'type_connecting'], 'string', 'max' => 2],
             [['description'], 'string'],
-            [['symbol'], 'string', 'max' => 5],
-            [['status'], 'string', 'max' => 2],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -49,7 +52,7 @@ class PlatformSearch extends Platform
      */
     public function search($params)
     {
-        $query = RegistrationDesk::find()
+        $query = Platform::find()
             ->with('terminals');
 
         // add conditions that should always apply here
@@ -59,6 +62,7 @@ class PlatformSearch extends Platform
             'sort' => [
                 'defaultOrder' => [
                     'symbol' => SORT_ASC,
+                    'name' => SORT_ASC,
                 ],
             ],
         ]);
@@ -76,9 +80,14 @@ class PlatformSearch extends Platform
             'id' => $this->id,
             'status' => $this->status,
             'terminal_id' => $this->terminal_id,
+            'width' => $this->width,
+            'length' => $this->length,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ]);
 
         $query->andFilterWhere(['like', 'symbol', $this->symbol])
+            ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;

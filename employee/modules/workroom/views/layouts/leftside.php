@@ -45,6 +45,12 @@ use yii\helpers\Url;
                                     'url' => ['registration-desk/index'],
                                     'active' => $this->context->route == 'registration-desk/index'
                                 ],
+                                [
+                                    'label' => 'Посадкові платформи',
+                                    'icon' => 'fa fa-square-o',
+                                    'url' => ['platform/index'],
+                                    'active' => $this->context->route == 'platform/index'
+                                ],
                             ]
                         ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
