@@ -78,6 +78,7 @@ class PlatformSearch extends Platform
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'type_connecting' => $this->type_connecting,
             'status' => $this->status,
             'terminal_id' => $this->terminal_id,
             'width' => $this->width,

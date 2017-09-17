@@ -123,6 +123,6 @@ class Platform extends \yii\db\ActiveRecord
 
     public function getTypeConnectingName()
     {
-        return ArrayHelper::getValue(self::getStatusList(), $this->type_connecting, 'Невизначений');
+        return ArrayHelper::getValue(self::getTypeConnectingList(), $this->type_connecting, 'Невизначений');
     }
 }
