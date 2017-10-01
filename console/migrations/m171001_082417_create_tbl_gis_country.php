@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m170806_114411_create_tbl_cities extends Migration
+class m171001_082417_create_tbl_gis_country extends Migration
 {
     public function up()
     {
@@ -11,17 +11,18 @@ class m170806_114411_create_tbl_cities extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%gis_cities}}', [
+        $this->createTable('{{%gis_country}}', [
             'id' => $this->primaryKey(),
+            'code' => $this->string(32)->unique()->notNull(),
             'name' => $this->string()->notNull(),
-            'state_id' => $this->integer()->unsigned(),
-            'country_code' => $this->string(32),
+            'slug' => $this->string()->notNull(),
+            'status' => $this->char(1)->notNull()->defaultValue('1'),
         ], $tableOptions);
     }
 
     public function down()
     {
-        $this->dropTable('{{%gis_cities}}');
+        $this->dropTable('{{%gis_country}}');
     }
 
     /*
@@ -33,7 +34,7 @@ class m170806_114411_create_tbl_cities extends Migration
 
     public function down()
     {
-        echo "m170806_114411_create_tbl_cities cannot be reverted.\n";
+        echo "m171001_082417_create_tbl_gis_country cannot be reverted.\n";
 
         return false;
     }
