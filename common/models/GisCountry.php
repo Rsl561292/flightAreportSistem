@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -69,4 +70,15 @@ class GisCountry extends \yii\db\ActiveRecord
         return ArrayHelper::getValue(self::getStatusList(), $this->status, 'Невизначено');
     }
 
+    public static function getActiveCountryListId()
+    {
+        $listCountry = (new Query())
+            ->select('name')
+            ->where(['status' => self::STATUS_ACTIVE])
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $listCountry;
+    }
 }
