@@ -3,11 +3,13 @@
 namespace employee\modules\workroom\controllers;
 
 use Yii;
-use common\models\GisRegions;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use common\models\GisCountry;
+use common\models\GisRegions;
+use employee\modules\workroom\models\search\RegionsSearch;
 
 /**
  * RegionsController implements the CRUD actions for GisRegions model.
@@ -20,6 +22,21 @@ class RegionsController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'index',
+                            'create',
+                            'update',
+                            'delete',
+                        ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -35,30 +52,19 @@ class RegionsController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => GisRegions::find(),
-        ]);
+        $searchModel = new RegionsSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single GisRegions model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * Creates a new GisRegions model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      * @return mixed
      */
     public function actionCreate()
@@ -66,17 +72,31 @@ class RegionsController extends Controller
         $model = new GisRegions();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Інформація про цей новий штат/регіон/обл., була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                $country = GisCountry::find()
+                    ->where(['id' => $model->country_id])
+                    ->one();
+
+                Yii::$app->session->setFlash('success', 'Інформація про новий штат/регіон/обл. під найменуванням \'' . $model->name . '\', країни \'' . $country['name'] . '\', була успішно збережена.');
+
+                return $this->redirect(['index']);
+
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
      * Updates an existing GisRegions model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
@@ -85,12 +105,25 @@ class RegionsController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про цей новий штат/регіон/обл. була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                $country = GisCountry::find()
+                    ->where(['id' => $model->country_id])
+                    ->one();
+
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про штат/регіон/обл. під найменуванням \'' . $model->name . '\', країни \'' . $country['name'] . '\', була успішно збережена.');
+
+                return $this->redirect(['index']);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -101,7 +134,18 @@ class RegionsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $nameRegion = $model->name;
+        $countryId = $model->country_id;
+
+        if ($model->delete()) {
+            $country = GisCountry::find()
+                ->where(['id' => $countryId])
+                ->one();
+
+            Yii::$app->session->setFlash('success', 'Запис про штат/регіон/обл. під найменуванням \'' . $nameRegion . '\', країни \'' . $country['name'] . '\' було успішно видалено.');
+        }
 
         return $this->redirect(['index']);
     }

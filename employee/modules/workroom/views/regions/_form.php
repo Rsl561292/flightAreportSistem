@@ -5,18 +5,18 @@ use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
 use dosamigos\ckeditor\CKEditor;
 use kartik\select2\Select2;
-use common\models\Terminals;
-use common\models\Platform;
+use common\models\GisCountry;
+use common\models\GisRegions;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Platform */
+/* @var $model common\models\GisRegions */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="platform-form">
+<div class="region-form">
     <?php
     Pjax::begin([
-        'id' => 'platform-grid',
+        'id' => 'region-grid',
         'timeout' => false,
         'enablePushState' => false,
         'clientOptions' => [
@@ -24,7 +24,7 @@ use common\models\Platform;
         ],
     ]);
     $form = ActiveForm::begin([
-        'id' => 'platform-form',
+        'id' => 'region-form',
         'enableClientValidation' => false,
         'enableAjaxValidation' => false,
         'validateOnSubmit' => true,
@@ -63,48 +63,28 @@ use common\models\Platform;
                     <?php endif;?>
 
                     <div class="row">
-                        <div class="col-sm-12 col-lg-12">
+                        <div class="col-sm-8 col-lg-8">
                             <?= $form->field($model, 'name')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'symbol')->textInput([
-                                'class' => 'form-control maxlength-handler',
-                                'maxlength' => 4,
-                            ]) ?>
-                        </div>
                         <div class="col-sm-4 col-lg-4">
                             <div class="box-margin-left-5px">
-                                <div class="box-margin-left-5px">
-                                    <?= $form->field($model, 'width')->textInput([
-                                        'class' => 'form-control maxlength-handler',
-                                        'maxlength' => 10,
-                                    ]) ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <div class="box-margin-left-5px">
-                                <div class="box-margin-left-5px">
-                                    <?= $form->field($model, 'length')->textInput([
-                                        'class' => 'form-control maxlength-handler',
-                                        'maxlength' => 10,
-                                    ]) ?>
-                                </div>
+                                <?= $form->field($model, 'code')->textInput([
+                                    'class' => 'form-control maxlength-handler',
+                                    'maxlength' => 32,
+                                ]) ?>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'terminal_id')->widget(Select2::className(),[
+                        <div class="col-sm-8 col-lg-8">
+                            <?= $form->field($model, 'country_id')->widget(Select2::className(),[
                                 'class' => 'form-control',
-                                'data' => Terminals::getTerminalsListAll(),
+                                'data' => GisCountry::getActiveCountryListId(),
                                 'options' => [
-                                    'placeholder' => 'Виберіть термінал ...',
+                                    'placeholder' => 'Виберіть країну розміщення регіону ...',
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true
@@ -112,48 +92,20 @@ use common\models\Platform;
                             ]); ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
-                            <div class="box-margin-left-10px">
-                                <div class="box-margin-left-10px">
-                                    <?= $form->field($model, 'type_connecting')->widget(Select2::className(),[
-                                        'class' => 'form-control',
-                                        'hideSearch' => true,
-                                        'data' => Platform::getTypeConnectingList(),
-                                        'options' => [
-                                            'placeholder' => 'Виберіть тип стикування ...',
-                                        ],
-                                        'pluginOptions' => [
-                                            'allowClear' => true
-                                        ],
-                                    ]); ?>
-                                </div>
+                            <div class="box-margin-left-5px">
+                                <?= $form->field($model, 'status')->widget(Select2::className(),[
+                                    'class' => 'form-control',
+                                    'hideSearch' => true,
+                                    'data' => GisRegions::getStatusList(),
+                                    'options' => [
+                                        'placeholder' => 'Виберіть статус ...',
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                ]); ?>
                             </div>
                         </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <div class="box-margin-left-10px">
-                                <div class="box-margin-left-10px">
-                                    <?= $form->field($model, 'status')->widget(Select2::className(),[
-                                        'class' => 'form-control',
-                                        'hideSearch' => true,
-                                        'data' => Platform::getStatusList(),
-                                        'options' => [
-                                            'placeholder' => 'Виберіть статус ...',
-                                        ],
-                                        'pluginOptions' => [
-                                            'allowClear' => true
-                                        ],
-                                    ]); ?>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <?= $form->field($model, 'description')->widget(CKEditor::className(),[
-                            'options' => [
-                                'placeholder' => 'Опис об\'єкта та інша інформація про нього ...',
-                                'rows' => 6
-                            ]
-                        ]) ?>
                     </div>
 
                     <div class="form-actions right">

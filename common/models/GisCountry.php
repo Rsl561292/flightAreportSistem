@@ -57,6 +57,11 @@ class GisCountry extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getRegions()
+    {
+        return $this->hasMany(GisRegions::className(), ['country_id' => 'id']);
+    }
+
     public static function getStatusList()
     {
         return [
@@ -74,7 +79,20 @@ class GisCountry extends \yii\db\ActiveRecord
     {
         $listCountry = (new Query())
             ->select('name')
+            ->from(GisCountry::tableName())
             ->where(['status' => self::STATUS_ACTIVE])
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $listCountry;
+    }
+
+    public static function getAllCountryListId()
+    {
+        $listCountry = (new Query())
+            ->select('name')
+            ->from(GisCountry::tableName())
             ->orderBy(['name' => SORT_ASC])
             ->indexBy('id')
             ->column();

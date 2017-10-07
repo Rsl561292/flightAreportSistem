@@ -50,13 +50,49 @@ class GisRegions extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['country_id', 'name', 'slug'], 'required'],
+            [['country_id', 'name', 'status'], 'required'],
             [['country_id'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 32],
+            ['code', 'validateIsRegionInCountryOnCode'],
             [['name', 'slug'], 'string', 'max' => 255],
+            ['name', 'validateIsRegionInCountryOnName'],
             [['status'], 'string', 'max' => 1],
+            [['status'], 'in', 'range' => array_keys(self::getStatusList())],
+            [['country_id'], 'in', 'range' => array_keys(GisCountry::getAllCountryListId())],
+            [['created_at', 'updated_at'], 'safe'],
         ];
+    }
+
+    public function validateIsRegionInCountryOnName($attribute,$params)
+    {
+        $query = GisRegions::find()
+            ->where([
+                'country_id' => $this->country_id,
+                'name' => $this->$attribute
+            ]);
+        if (!$this->isNewRecord) {
+            $query->andWhere(['not', ['id' => $this->id]]);
+        }
+
+        if($query->exists()){
+            $this->addError($attribute,'Штат/регіон/обл. з таким найменуванням уже існує для вибраної вами країни.');
+        }
+    }
+
+    public function validateIsRegionInCountryOnCode($attribute,$params)
+    {
+        $query = GisRegions::find()
+            ->where([
+                'country_id' => $this->country_id,
+                'code' => $this->$attribute
+            ]);
+        if (!$this->isNewRecord) {
+            $query->andWhere(['not', ['id' => $this->id]]);
+        }
+
+        if($query->exists()){
+            $this->addError($attribute,'Штат/регіон/обл. з таким кодом уже існує для вибраної вами країни.');
+        }
     }
 
     /**
@@ -67,13 +103,18 @@ class GisRegions extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'country_id' => 'Країна',
-            'code' => 'Код в країні',
+            'code' => 'Код регіону/штату',
             'name' => 'Найменування',
             'slug' => 'Слаг',
             'status' => 'Статус',
             'created_at' => 'Дата створення',
             'updated_at' => 'Дата оновлення',
         ];
+    }
+
+    public function getCountry()
+    {
+        return $this->hasOne(GisCountry::className(), ['id' => 'country_id']);
     }
 
     public static function getStatusList()
@@ -87,5 +128,12 @@ class GisRegions extends \yii\db\ActiveRecord
     public function getStatusName()
     {
         return ArrayHelper::getValue(self::getStatusList(), $this->status, 'Невизначено');
+    }
+
+    public function beforeSave($insert)
+    {
+        $this->slug = strtr(mb_strtolower($this->name), ' ', '-');
+
+        return true;
     }
 }

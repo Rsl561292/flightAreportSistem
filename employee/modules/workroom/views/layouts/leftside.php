@@ -53,6 +53,25 @@ use yii\helpers\Url;
                                 ],
                             ]
                         ],
+                        [
+                            'label' => 'Локації',
+                            'icon' => 'fa fa-building-o',
+                            'url' => '#',
+                            'items' => [
+                                [
+                                    'label' => 'Країни',
+                                    'icon' => 'fa fa-building-o',
+                                    'url' => ['countries/index'],
+                                    'active' => $this->context->route == 'countries/index'
+                                ],
+                                [
+                                    'label' => 'Регіони країн',
+                                    'icon' => 'fa fa-building-o',
+                                    'url' => ['regions/index'],
+                                    'active' => $this->context->route == 'regions/index'
+                                ],
+                            ]
+                        ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
                     ],
                 ]
