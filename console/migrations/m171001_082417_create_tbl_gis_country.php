@@ -16,7 +16,7 @@ class m171001_082417_create_tbl_gis_country extends Migration
             'code' => $this->string(32)->unique()->notNull(),
             'name' => $this->string()->notNull(),
             'slug' => $this->string()->notNull(),
-            'status' => $this->char(1)->notNull()->defaultValue('1'),
+            'status' => $this->char(1)->defaultValue('1'),
         ], $tableOptions);
     }
 

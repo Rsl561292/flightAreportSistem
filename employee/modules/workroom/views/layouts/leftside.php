@@ -61,8 +61,8 @@ use yii\helpers\Url;
                                 [
                                     'label' => 'Країни',
                                     'icon' => 'fa fa-building-o',
-                                    'url' => ['countries/index'],
-                                    'active' => $this->context->route == 'countries/index'
+                                    'url' => ['country/index'],
+                                    'active' => $this->context->route == 'country/index'
                                 ],
                                 [
                                     'label' => 'Регіони країн',

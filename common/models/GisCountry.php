@@ -39,7 +39,7 @@ class GisCountry extends \yii\db\ActiveRecord
             [['name', 'slug'], 'string', 'max' => 255],
             [['status'], 'string', 'max' => 1],
             [['code'], 'unique'],
-            ['status', 'default' => '1']
+            //['status', 'default' => '1']
         ];
     }
 
