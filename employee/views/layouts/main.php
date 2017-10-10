@@ -6,11 +6,15 @@
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use employee\assets\BackendAsset;
+use employee\assets\AdminLteAsset;
+use employee\assets\AppAsset;
 use yii\widgets\Breadcrumbs;
-use employee\assets\BaseEmployeeAsset;
 use common\widgets\Alert;
 
-BaseEmployeeAsset::register($this);
+BackendAsset::register($this);
+AdminLteAsset::register($this);
+AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

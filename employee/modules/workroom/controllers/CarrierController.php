@@ -3,11 +3,12 @@
 namespace employee\modules\workroom\controllers;
 
 use Yii;
-use common\models\Carrier;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use common\models\Carrier;
+use employee\modules\workroom\models\search\CarrierSearch;
 
 /**
  * CarrierController implements the CRUD actions for Carrier model.
@@ -20,6 +21,23 @@ class CarrierController extends Controller
     public function behaviors()
     {
         return [
+
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'index',
+                            'create',
+                            'update',
+                            'view',
+                            'delete',
+                        ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -35,11 +53,12 @@ class CarrierController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Carrier::find(),
-        ]);
+        $searchModel = new CarrierSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -58,7 +77,7 @@ class CarrierController extends Controller
 
     /**
      * Creates a new Carrier model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      * @return mixed
      */
     public function actionCreate()
@@ -66,17 +85,27 @@ class CarrierController extends Controller
         $model = new Carrier();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Інформація про цього авіаперевізника була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Інформація про нового авіаперевізника під назвою \'' . $model->name . '\' була успішно збережена.');
+
+                return $this->redirect(['index']);
+
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
      * Updates an existing Carrier model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
@@ -85,12 +114,21 @@ class CarrierController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про цього авіаперевізника була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про авіаперевізника \''.$model->name.'\' була успішно збережена.');
+
+                return $this->redirect(['index']);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -101,7 +139,13 @@ class CarrierController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $name = $model->name;
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Запис про авіаперевізника з найменуванням \''.$name.'\' було успішно видалено.');
+        }
 
         return $this->redirect(['index']);
     }

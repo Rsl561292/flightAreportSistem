@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -112,6 +113,11 @@ class GisRegions extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getCarrier()
+    {
+        return $this->hasMany(Carrier::className(), ['region_id' => 'id']);
+    }
+
     public function getCountry()
     {
         return $this->hasOne(GisCountry::className(), ['id' => 'country_id']);
@@ -135,5 +141,31 @@ class GisRegions extends \yii\db\ActiveRecord
         $this->slug = strtr(mb_strtolower($this->name), ' ', '-');
 
         return true;
+    }
+
+    public static function getActiveRegionsListByCountryOnId($countryId)
+    {
+        $listRegions = (new Query())
+            ->select('name')
+            ->from(GisRegions::tableName())
+            ->where(['status' => self::STATUS_ACTIVE])
+            ->andWhere(['country_id' => $countryId])
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $listRegions;
+    }
+
+    public static function getAllRegionsListId()
+    {
+        $listRegions = (new Query())
+            ->select('name')
+            ->from(GisRegions::tableName())
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $listRegions;
     }
 }

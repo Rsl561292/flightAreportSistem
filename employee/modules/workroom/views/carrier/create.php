@@ -1,18 +1,15 @@
 <?php
 
-use yii\helpers\Html;
-
-
 /* @var $this yii\web\View */
-/* @var $model common\models\Carrier */
+/* @var $model common\models\GisRegions */
 
-$this->title = 'Create Carrier';
-$this->params['breadcrumbs'][] = ['label' => 'Carriers', 'url' => ['index']];
+$this->title = 'Додати нового авіаперевізника';
+$this->params['breadcrumbs'][] = ['label' => 'Авіаперевізники', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['inscription_object_title'] = 'Авіаперевізники';
+$this->params['inscription_object_explanation'] = 'Додавання авіаперевізника';
 ?>
 <div class="carrier-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

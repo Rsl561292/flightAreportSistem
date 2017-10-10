@@ -9,6 +9,8 @@ class BackendAsset extends \yii\web\AssetBundle
     public $baseUrl = '@web/backend';
     public $css = [
         // BEGIN THEME STYLES
+        'global/plugins/select2/select2.css',
+        'global/plugins/select2/select2-bootstrap.css',
         'global/css/components_2.css',
         'global/css/plugins.css',
         // END THEME STYLES
@@ -24,6 +26,7 @@ class BackendAsset extends \yii\web\AssetBundle
     ];
 
     public $js = [
+        'global/plugins/select2/select2.min.js',
         /*'global/plugins/bootstrap-slider/bootstrap-slider.js',
         'global/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.js',
         'global/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js',

@@ -1,18 +1,15 @@
 <?php
 
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
-/* @var $model common\models\Carrier */
+/* @var $model common\models\GisRegions */
 
-$this->title = 'Update Carrier: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Carriers', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Редагування інформації';
+$this->params['breadcrumbs'][] = ['label' => 'Авіаперевізники', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+$this->params['inscription_object_title'] = 'Авіаперевізники';
+$this->params['inscription_object_explanation'] = 'Редагування інформації';
 ?>
 <div class="carrier-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

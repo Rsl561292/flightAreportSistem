@@ -38,22 +38,40 @@ class Carrier extends \yii\db\ActiveRecord
         return '{{%carrier}}';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => 'updated_at',
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['identification_code', 'name'], 'required'],
+            [['identification_code', 'name', 'status'], 'required'],
             [['short_description', 'description'], 'string'],
             [['country_id', 'region_id'], 'integer'],
+            [['country_id'], 'in', 'range' => array_keys(GisCountry::getAllCountryListId())],
+            [['region_id'], 'in', 'range' => array_keys(GisRegions::getAllRegionsListId())],
             [['identification_code'], 'string', 'max' => 30],
             [['name', 'city', 'other_address'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 20],
             [['email'], 'string', 'max' => 100],
+            ['email', 'email'],
             [['status'], 'string', 'max' => 1],
+            [['status'], 'in', 'range' => array_keys(self::getStatusList())],
+            [['status'], 'default', 'value' => self::STATUS_ACTIVE],
             [['identification_code'], 'unique'],
             [['created_at', 'updated_at'], 'safe'],
+            [['identification_code', 'name', 'city', 'other_address', 'phone', 'email'], 'filter', 'filter' => 'trim'],
         ];
     }
 
@@ -64,19 +82,42 @@ class Carrier extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'identification_code' => 'Identification Code',
-            'name' => 'Name',
-            'short_description' => 'Short Description',
-            'country_id' => 'Country ID',
-            'region_id' => 'Region ID',
-            'city' => 'City',
-            'other_address' => 'Other Address',
-            'phone' => 'Phone',
-            'email' => 'Email',
-            'status' => 'Status',
-            'description' => 'Description',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'identification_code' => 'Ідентифікаційний код',
+            'name' => 'Найменування',
+            'short_description' => 'Короткий опис',
+            'country_id' => 'Країна',
+            'region_id' => 'Штат/регіон/обл.',
+            'city' => 'Місто',
+            'other_address' => 'Повна адреса',
+            'phone' => 'Телефон',
+            'email' => 'Емеїл',
+            'status' => 'Статус',
+            'description' => 'Опис',
+            'created_at' => 'Дата створення запису',
+            'updated_at' => 'Дата оновлення запису',
         ];
+    }
+
+    public function getCountry()
+    {
+        return $this->hasOne(GisCountry::className(), ['id' => 'country_id']);
+    }
+
+    public function getRegion()
+    {
+        return $this->hasOne(GisRegions::className(), ['id' => 'region_id']);
+    }
+
+    public static function getStatusList()
+    {
+        return [
+            self::STATUS_ACTIVE => 'Активний',
+            self::STATUS_INACTIVE => 'Не активний',
+        ];
+    }
+
+    public function getStatusName()
+    {
+        return ArrayHelper::getValue(self::getStatusList(), $this->status, 'Невизначено');
     }
 }

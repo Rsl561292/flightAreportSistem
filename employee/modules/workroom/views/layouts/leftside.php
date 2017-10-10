@@ -72,6 +72,12 @@ use yii\helpers\Url;
                                 ],
                             ]
                         ],
+                        [
+                            'label' => 'Авіаперевізники',
+                            'icon' => 'fa fa-fighter-jet',
+                            'url' => ['carrier/index'],
+                            'active' => $this->context->route == 'carrier/index'
+                        ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
                     ],
                 ]

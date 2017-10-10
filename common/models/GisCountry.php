@@ -62,6 +62,11 @@ class GisCountry extends \yii\db\ActiveRecord
         return $this->hasMany(GisRegions::className(), ['country_id' => 'id']);
     }
 
+    public function getCarrier()
+    {
+        return $this->hasMany(Carrier::className(), ['country_id' => 'id']);
+    }
+
     public static function getStatusList()
     {
         return [
