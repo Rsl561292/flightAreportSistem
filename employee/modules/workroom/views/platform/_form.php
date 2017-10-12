@@ -11,6 +11,10 @@ use common\models\Platform;
 /* @var $this yii\web\View */
 /* @var $model common\models\Platform */
 /* @var $form yii\widgets\ActiveForm */
+
+$this->registerJs("
+	$('#" . Html::getInputId($model, 'terminal_id') . ", #" . Html::getInputId($model, 'type_connecting') . ", #" . Html::getInputId($model, 'status') . "').select2({minimumResultsForSearch: -1});
+", \yii\web\View::POS_READY);
 ?>
 
 <div class="platform-form">
@@ -100,30 +104,17 @@ use common\models\Platform;
 
                     <div class="row">
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'terminal_id')->widget(Select2::className(),[
+                            <?= $form->field($model, 'terminal_id')->dropDownList(Terminals::getTerminalsListAll(), [
                                 'class' => 'form-control',
-                                'data' => Terminals::getTerminalsListAll(),
-                                'options' => [
-                                    'placeholder' => 'Виберіть термінал ...',
-                                ],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
+                                'prompt' => '- Вибір -',
                             ]); ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
                             <div class="box-margin-left-10px">
                                 <div class="box-margin-left-10px">
-                                    <?= $form->field($model, 'type_connecting')->widget(Select2::className(),[
+                                    <?= $form->field($model, 'type_connecting')->dropDownList(Platform::getTypeConnectingList(), [
                                         'class' => 'form-control',
-                                        'hideSearch' => true,
-                                        'data' => Platform::getTypeConnectingList(),
-                                        'options' => [
-                                            'placeholder' => 'Виберіть тип стикування ...',
-                                        ],
-                                        'pluginOptions' => [
-                                            'allowClear' => true
-                                        ],
+                                        'prompt' => '- Вибір -',
                                     ]); ?>
                                 </div>
                             </div>
@@ -131,16 +122,9 @@ use common\models\Platform;
                         <div class="col-sm-4 col-lg-4">
                             <div class="box-margin-left-10px">
                                 <div class="box-margin-left-10px">
-                                    <?= $form->field($model, 'status')->widget(Select2::className(),[
+                                    <?= $form->field($model, 'status')->dropDownList(Platform::getStatusList(), [
                                         'class' => 'form-control',
-                                        'hideSearch' => true,
-                                        'data' => Platform::getStatusList(),
-                                        'options' => [
-                                            'placeholder' => 'Виберіть статус ...',
-                                        ],
-                                        'pluginOptions' => [
-                                            'allowClear' => true
-                                        ],
+                                        'prompt' => '- Вибір -',
                                     ]); ?>
                                 </div>
                             </div>

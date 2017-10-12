@@ -12,6 +12,9 @@ use common\models\Terminals;
 /* @var $model common\models\Terminals */
 /* @var $form yii\widgets\ActiveForm */
 
+$this->registerJs("
+	$('#" . Html::getInputId($model, 'status') . "').select2({minimumResultsForSearch: -1});
+", \yii\web\View::POS_READY);
 ?>
 
 <div class="terminals-form">
@@ -101,16 +104,9 @@ use common\models\Terminals;
                                     </div>
                                     <div class="col-sm-5 col-lg-5">
                                         <div class="box-margin-left-10px">
-                                            <?= $form->field($model, 'status')->widget(Select2::className(),[
+                                            <?= $form->field($model, 'status')->dropDownList(Terminals::getStatusList(), [
                                                 'class' => 'form-control',
-                                                'hideSearch' => true,
-                                                'data' => Terminals::getStatusList(),
-                                                'options' => [
-                                                    'placeholder' => 'Виберіть статус ...',
-                                                    'options' => [
-                                                        'allowClear' => true
-                                                    ]
-                                                ],
+                                                'prompt' => '- Вибір -',
                                             ]); ?>
                                         </div>
                                     </div>

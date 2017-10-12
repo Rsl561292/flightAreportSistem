@@ -12,6 +12,9 @@ use common\models\RegistrationDesk;
 /* @var $model common\models\RegistrationDesk */
 /* @var $form yii\widgets\ActiveForm */
 
+$this->registerJs("
+	$('#" . Html::getInputId($model, 'terminal_id') . ", #" . Html::getInputId($model, 'status') . "').select2({minimumResultsForSearch: -1});
+", \yii\web\View::POS_READY);
 ?>
 
 <div class="registration-desk-form">
@@ -72,31 +75,18 @@ use common\models\RegistrationDesk;
                             </div>
                             <div class="col-sm-6 col-lg-6">
                                 <div class="box-margin-left-10px">
-                                    <?= $form->field($model, 'terminal_id')->widget(Select2::className(),[
+                                    <?= $form->field($model, 'terminal_id')->dropDownList(Terminals::getTerminalsListAll(), [
                                         'class' => 'form-control',
-                                        'data' => Terminals::getTerminalsListAll(),
-                                        'options' => [
-                                            'placeholder' => 'Виберіть термінал ...',
-                                        ],
-                                        'pluginOptions' => [
-                                            'allowClear' => true
-                                        ],
+                                        'prompt' => '- Вибір -',
                                     ]); ?>
                                 </div>
                             </div>
                             <div class="col-sm-4 col-lg-4">
                                 <div class="box-margin-left-10px">
                                     <div class="box-margin-left-10px">
-                                        <?= $form->field($model, 'status')->widget(Select2::className(),[
+                                        <?= $form->field($model, 'status')->dropDownList(RegistrationDesk::getStatusList(), [
                                             'class' => 'form-control',
-                                            'hideSearch' => true,
-                                            'data' => RegistrationDesk::getStatusList(),
-                                            'options' => [
-                                                'placeholder' => 'Виберіть статус ...',
-                                            ],
-                                            'pluginOptions' => [
-                                                'allowClear' => true
-                                            ],
+                                            'prompt' => '- Вибір -',
                                         ]); ?>
                                 </div>
                             </div>

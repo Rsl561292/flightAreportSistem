@@ -11,6 +11,11 @@ use common\models\GisRegions;
 /* @var $this yii\web\View */
 /* @var $model common\models\GisRegions */
 /* @var $form yii\widgets\ActiveForm */
+
+$this->registerJs("
+	$('#" . Html::getInputId($model, 'country_id') . "').select2();
+	$('#" . Html::getInputId($model, 'status') . "').select2({minimumResultsForSearch: -1});
+", \yii\web\View::POS_READY);
 ?>
 
 <div class="region-form">
@@ -80,29 +85,17 @@ use common\models\GisRegions;
 
                     <div class="row">
                         <div class="col-sm-8 col-lg-8">
-                            <?= $form->field($model, 'country_id')->widget(Select2::className(),[
+                            <?= $form->field($model, 'country_id')->dropDownList(GisCountry::getActiveCountryListId(), [
                                 'class' => 'form-control',
-                                'data' => GisCountry::getActiveCountryListId(),
-                                'options' => [
-                                    'placeholder' => 'Виберіть країну розміщення регіону ...',
-                                ],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
+                                'encode' => false,
+                                'prompt' => '- Вибір -'
                             ]); ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
                             <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'status')->widget(Select2::className(),[
+                                <?= $form->field($model, 'status')->dropDownList(GisRegions::getStatusList(), [
                                     'class' => 'form-control',
-                                    'hideSearch' => true,
-                                    'data' => GisRegions::getStatusList(),
-                                    'options' => [
-                                        'placeholder' => 'Виберіть статус ...',
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
+                                    'prompt' => '- Вибір -',
                                 ]); ?>
                             </div>
                         </div>

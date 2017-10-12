@@ -15,6 +15,7 @@ use common\models\Carrier;
 
 $this->registerJs("
 	$('#" . Html::getInputId($model, 'country_id') . ", #" . Html::getInputId($model, 'region_id') . "').select2();
+	$('#" . Html::getInputId($model, 'status') . "').select2({minimumResultsForSearch: -1});
 ", \yii\web\View::POS_READY);
 ?>
 
@@ -165,8 +166,7 @@ $this->registerJs("
                         <div class="col-sm-8 col-lg-8">
                             <?= $form->field($model, 'status')->dropDownList(Carrier::getStatusList(), [
                                 'class' => 'form-control',
-                                'encode' => false,
-                                'prompt' => '- Вибір -'
+                                'prompt' => '- Вибір -',
                             ]); ?>
                         </div>
                     </div>

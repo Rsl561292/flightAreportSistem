@@ -65,6 +65,16 @@ $this->params['inscription_object_explanation'] = 'Список регіонів
                                     ]),
                                 ],
                                 [
+                                    'attribute' => 'name',
+                                    'content' => function($model) {
+                                        return $model->name;
+                                    },
+                                    'filter' => Html::activeTextInput($searchModel, 'name', [
+                                        'class' => 'form-control form-filter input-sm',
+                                        'placeholder' => $searchModel->getAttributeLabel('name'),
+                                    ]),
+                                ],
+                                [
                                     'attribute' => 'code',
                                     'label' => 'Код регіону',
                                     'content' => function($model) {
@@ -73,16 +83,6 @@ $this->params['inscription_object_explanation'] = 'Список регіонів
                                     'filter' => Html::activeTextInput($searchModel, 'code', [
                                         'class' => 'form-control form-filter input-sm',
                                         'placeholder' => $searchModel->getAttributeLabel('code'),
-                                    ]),
-                                ],
-                                [
-                                    'attribute' => 'name',
-                                    'content' => function($model) {
-                                        return $model->name;
-                                    },
-                                    'filter' => Html::activeTextInput($searchModel, 'name', [
-                                        'class' => 'form-control form-filter input-sm',
-                                        'placeholder' => $searchModel->getAttributeLabel('name'),
                                     ]),
                                 ],
                                 [
