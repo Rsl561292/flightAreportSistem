@@ -13,7 +13,9 @@ $this->title = 'Авіаперевізники';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['inscription_object_title'] = 'Авіаперевізники';
 $this->params['inscription_object_explanation'] = 'Список авіаперевізників';
+
 ?>
+
 <div class="regions-index">
 
     <div class="row">
