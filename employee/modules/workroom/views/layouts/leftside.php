@@ -78,6 +78,25 @@ use yii\helpers\Url;
                             'url' => ['carrier/index'],
                             'active' => $this->context->route == 'carrier/index'
                         ],
+                        [
+                            'label' => 'Повітряні судна',
+                            'icon' => 'fa fa-plane',
+                            'url' => '#',
+                            'items' => [
+                                [
+                                    'label' => 'Повітряні судна',
+                                    'icon' => 'fa fa-plane',
+                                    'url' => ['plane/index'],
+                                    'active' => $this->context->route == 'plane/index'
+                                ],
+                                [
+                                    'label' => 'Моделі ПС',
+                                    'icon' => 'fa fa-fighter-jet',
+                                    'url' => ['plane-types/index'],
+                                    'active' => $this->context->route == 'plane-types/index'
+                                ],
+                            ]
+                        ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
                     ],
                 ]

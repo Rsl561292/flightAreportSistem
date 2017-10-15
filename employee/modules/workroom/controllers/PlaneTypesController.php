@@ -3,11 +3,12 @@
 namespace employee\modules\workroom\controllers;
 
 use Yii;
-use common\models\TypesPlanes;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use common\models\TypesPlanes;
+use employee\modules\workroom\models\search\PlaneTypesSearch;
 
 /**
  * PlaneTypesController implements the CRUD actions for TypesPlanes model.
@@ -20,6 +21,22 @@ class PlaneTypesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'index',
+                            'create',
+                            'update',
+                            'view',
+                            'delete',
+                        ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -35,11 +52,12 @@ class PlaneTypesController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => TypesPlanes::find(),
-        ]);
+        $searchModel = new PlaneTypesSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -58,7 +76,7 @@ class PlaneTypesController extends Controller
 
     /**
      * Creates a new TypesPlanes model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      * @return mixed
      */
     public function actionCreate()
@@ -66,17 +84,27 @@ class PlaneTypesController extends Controller
         $model = new TypesPlanes();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Інформація про цю модель повітряного судна була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Інформація про нову модель повітряного судна під назвою \'' . $model->full_name_type . '\' була успішно збережена.');
+
+                return $this->redirect(['index']);
+
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
      * Updates an existing TypesPlanes model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
@@ -85,12 +113,21 @@ class PlaneTypesController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про цю модель повітряного судна була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про модель повітряного судна \''.$model->full_name_type.'\' була успішно збережена.');
+
+                return $this->redirect(['index']);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -101,7 +138,13 @@ class PlaneTypesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $name = $model->full_name_type;
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Запис про модель повітряного судна з найменуванням \''.$name.'\' було успішно видалено.');
+        }
 
         return $this->redirect(['index']);
     }

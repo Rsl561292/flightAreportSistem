@@ -11,7 +11,7 @@ class BackendAsset extends \yii\web\AssetBundle
         // BEGIN THEME STYLES
         'global/plugins/select2/select2.css',
         'global/plugins/select2/select2-bootstrap.css',
-        'global/css/components_2.css',
+        'global/css/components_3.css',
         'global/css/plugins.css',
         // END THEME STYLES
         //plugins

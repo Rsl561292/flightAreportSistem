@@ -1155,9 +1155,9 @@ div.radio span.checked {
     font-size: 13px;
     color: #000;
     text-align: left;
-    text-transform: capitalize;
+    /*text-transform: capitalize;*/
     display: table-cell;
-    width: 130px;
+    width: 180px;
     padding: 0;
     line-height: 33px;
     vertical-align: top;

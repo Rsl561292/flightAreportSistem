@@ -3,20 +3,19 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
-use common\models\GisCountry;
-use common\models\GisRegions;
+use common\models\TypesPlanes;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Авіаперевізники';
+$this->title = 'Моделі ПС';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Авіаперевізники';
-$this->params['inscription_object_explanation'] = 'Список авіаперевізників';
+$this->params['inscription_object_title'] = 'Моделі ПС';
+$this->params['inscription_object_explanation'] = 'Список моделей ПС';
 
 ?>
 
-<div class="regions-index">
+<div class="plane-types-index">
 
     <div class="row">
         <div class="col-xs-12">
@@ -26,7 +25,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Додати нового авіаперевізника', ['create'], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Додати нової моделі ПС', ['create'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
 
@@ -52,60 +51,48 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                             'columns' => [
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{delete} {update}',
+                                    'template' => '{delete} {update} {view}',
                                     'header' => Html::a('<i class="fa fa-refresh"></i> Оновити', ['index'], ['class' => 'btn red']),
                                     'contentOptions' => ['class' => 'action-column'],
                                 ],
                                 [
-                                    'attribute' => 'identification_code',
-                                    'label' => 'Ідент. коде',
+                                    'attribute' => 'full_name_type',
                                     'content' => function($model) {
-                                        return $model->identification_code;
+                                        return Html::encode($model->full_name_type);
                                     },
-                                    'filter' => Html::activeTextInput($searchModel, 'identification_code', [
+                                    'filter' => Html::activeTextInput($searchModel, 'full_name_type', [
                                         'class' => 'form-control form-filter input-sm',
-                                        'placeholder' => $searchModel->getAttributeLabel('identification_code'),
+                                        'placeholder' => $searchModel->getAttributeLabel('full_name_type'),
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'name',
+                                    'attribute' => 'marking',
                                     'content' => function($model) {
-                                        return $model->name;
+                                        return Html::encode($model->marking);
                                     },
-                                    'filter' => Html::activeTextInput($searchModel, 'name', [
+                                    'filter' => Html::activeTextInput($searchModel, 'marking', [
                                         'class' => 'form-control form-filter input-sm',
-                                        'placeholder' => $searchModel->getAttributeLabel('name'),
+                                        'placeholder' => $searchModel->getAttributeLabel('marking'),
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'country_id',
+                                    'attribute' => 'kind',
                                     'content' => function($model) {
-                                        return Html::encode($model->country->name);
+                                        return $model->getKindName();
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'country_id', GisCountry::getActiveCountryListId(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'kind', TypesPlanes::getKindList(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Країна -'
+                                        'prompt' => '- Всі типи -'
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'status',
+                                    'attribute' => 'category_plane',
                                     'content' => function($model) {
-                                        $class = 'label-primary';
-
-                                        switch ($model->status) {
-                                            case GisRegions::STATUS_ACTIVE:
-                                                $class = 'label-success';
-                                                break;
-                                            case GisRegions::STATUS_INACTIVE:
-                                                $class = 'label-danger';
-                                                break;
-                                        }
-
-                                        return Html::tag('span', $model->getStatusName(), ['class' => 'label label-sm ' . $class]);
+                                        return $model->getCategoryName();
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'status', GisRegions::getStatusList(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'category_plane', TypesPlanes::getCategoryList(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Статус -'
+                                        'prompt' => '- Всі категорії -'
                                     ]),
                                 ],
                             ],
