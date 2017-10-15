@@ -13,11 +13,11 @@ class m170805_121738_create_tbl_plane extends Migration
 
         $this->createTable('{{%plane}}', [
             'id' => $this->primaryKey(),
-            'type_id' => $this->integer(11)->notNull(),
+            'type_id' => $this->integer(11)->unsigned()->notNull()->defaultValue(0),
             'registration_code' => $this->string(20)->unique()->notNull(),
-            'carrier_id' => $this->integer(11)->notNull(),
-            'status_location' => $this->char(1)->notNull()->defaultValue('0'),
-            'status_preparation' => $this->char(2)->notNull()->defaultValue('0')
+            'carrier_id' => $this->integer(11)->unsigned()->notNull()->defaultValue(0),
+            'status_location' => $this->char(1)->notNull()->defaultValue('1'),
+            'status_preparation' => $this->char(2)->notNull()->defaultValue('1')
         ], $tableOptions);
     }
 
