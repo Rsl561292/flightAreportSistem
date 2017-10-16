@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -302,6 +303,13 @@ class TypesPlanes extends \yii\db\ActiveRecord
         ];
     }
 
+    //====================================================================================
+    public function getPlane()
+    {
+        return $this->hasMany(Plane::className(), ['type_id' => 'id']);
+    }
+
+    //=======================================================================================
     public static function getKindList()
     {
         return [
@@ -330,4 +338,15 @@ class TypesPlanes extends \yii\db\ActiveRecord
         return ArrayHelper::getValue(self::getCategoryList(), $this->category_plane, 'Невизначено');
     }
 
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('full_name_type')
+            ->from(self::tableName())
+            ->orderBy(['full_name_type' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
 }

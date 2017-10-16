@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -98,6 +99,7 @@ class Carrier extends \yii\db\ActiveRecord
         ];
     }
 
+    //========================================================================================
     public function getCountry()
     {
         return $this->hasOne(GisCountry::className(), ['id' => 'country_id']);
@@ -108,6 +110,12 @@ class Carrier extends \yii\db\ActiveRecord
         return $this->hasOne(GisRegions::className(), ['id' => 'region_id']);
     }
 
+    public function getPlane()
+    {
+        return $this->hasMany(Plane::className(), ['carrier_id' => 'id']);
+    }
+
+    //==========================================================================================
     public static function getStatusList()
     {
         return [
@@ -119,5 +127,30 @@ class Carrier extends \yii\db\ActiveRecord
     public function getStatusName()
     {
         return ArrayHelper::getValue(self::getStatusList(), $this->status, 'Невизначено');
+    }
+
+    public static function getActiveRecordListId()
+    {
+        $list = (new Query())
+            ->select('name')
+            ->from(self::tableName())
+            ->where(['status' => self::STATUS_ACTIVE])
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
+
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('name')
+            ->from(self::tableName())
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
     }
 }

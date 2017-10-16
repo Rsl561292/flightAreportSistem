@@ -3,11 +3,12 @@
 namespace employee\modules\workroom\controllers;
 
 use Yii;
-use common\models\Plane;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use common\models\Plane;
+use employee\modules\workroom\models\search\PlaneSearch;
 
 /**
  * PlaneController implements the CRUD actions for Plane model.
@@ -20,6 +21,22 @@ class PlaneController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'index',
+                            'create',
+                            'update',
+                            'view',
+                            'delete',
+                        ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -35,11 +52,12 @@ class PlaneController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Plane::find(),
-        ]);
+        $searchModel = new PlaneSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -51,14 +69,26 @@ class PlaneController extends Controller
      */
     public function actionView($id)
     {
+        $model = Plane::find()
+            ->with([
+                'type',
+                'carrier',
+            ])
+            ->where(['id' => $id])
+            ->one();
+
+        if ($model === null) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
     /**
      * Creates a new Plane model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      * @return mixed
      */
     public function actionCreate()
@@ -66,17 +96,27 @@ class PlaneController extends Controller
         $model = new Plane();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Інформація про це ПС була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Інформація про нове ПС під кодом реєстрації \'' . $model->registration_code . '\' була успішно збережена.');
+
+                return $this->redirect(['index']);
+
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
      * Updates an existing Plane model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
@@ -85,12 +125,21 @@ class PlaneController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про це ПС була успішно збережена.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Оновлена вами інформація про ПС \''.$model->registration_code.'\' була успішно збережена.');
+
+                return $this->redirect(['index']);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -101,7 +150,13 @@ class PlaneController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $name = $model->registration_code;
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Запис про ПС з реєстраційним кодом \''.$name.'\' було успішно видалено.');
+        }
 
         return $this->redirect(['index']);
     }
