@@ -106,7 +106,7 @@ $this->params['inscription_object_explanation'] = 'Список повітрян
                                                 break;
                                         }
 
-                                        return Html::tag('span', $model->getStatusLocationName(), ['class' => 'label label-sm ' . $class]);
+                                        return Html::tag('div', Html::tag('span', $model->getStatusLocationName()) , ['class' => 'div-label label-sm ' . $class]);
                                     },
                                     'filter' => Html::activeDropDownList($searchModel, 'status_location', Plane::getStatusLocationList(), [
                                         'class' => 'form-control form-filter input-sm',
@@ -131,7 +131,7 @@ $this->params['inscription_object_explanation'] = 'Список повітрян
                                                 break;
                                         }
 
-                                        return Html::tag('span', $model->getStatusPreparationName(), ['class' => 'label label-sm ' . $class]);
+                                        return Html::tag('div', Html::tag('span', $model->getStatusPreparationName()), ['class' => 'div-label label-sm ' . $class]);
                                     },
                                     'filter' => Html::activeDropDownList($searchModel, 'status_preparation', Plane::getStatusPreparationList(), [
                                         'class' => 'form-control form-filter input-sm',

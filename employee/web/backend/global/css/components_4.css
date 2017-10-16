@@ -3788,6 +3788,20 @@ Input icons
 /***
 Customized Bootstrap Labels
 ***/
+.div-label {
+  text-shadow: none !important;
+  font-size: 13px;
+  font-weight: 300;
+  padding: 3px 6px 3px 6px;
+  color: #fff;
+  font-family: "Open Sans", sans-serif;
+  line-height: 1;
+  text-align: center;
+  width: 100%;
+  /* white-space: nowrap; */
+  vertical-align: baseline;
+  border-radius: .25em;
+}
 .label {
   text-shadow: none !important;
   font-size: 13px;
