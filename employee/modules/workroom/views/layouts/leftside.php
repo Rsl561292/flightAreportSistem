@@ -51,6 +51,12 @@ use yii\helpers\Url;
                                     'url' => ['platform/index'],
                                     'active' => $this->context->route == 'platform/index'
                                 ],
+                                [
+                                    'label' => 'Льотні смуги',
+                                    'icon' => 'fa fa-road',
+                                    'url' => ['flight-strips/index'],
+                                    'active' => $this->context->route == 'flight-strips/index'
+                                ],
                             ]
                         ],
                         [

@@ -13,14 +13,16 @@ use common\models\FlightStrips;
 class FlightStripsSearch extends FlightStrips
 {
 
-    public $pageSize;
-
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
+            [['id'], 'integer'],
+            [['name'], 'string', 'max' => 255],
+            [['marking'], 'string', 'max' => 15],
+            [['surface', 'category'], 'string', 'max' => 1],
             [
                 [
                     'length_NDR',
@@ -32,14 +34,10 @@ class FlightStripsSearch extends FlightStrips
                     'width_sidebar_safety'
                 ], 'number'
             ],
+            [['status'], 'string', 'max' => 2],
             [['description'], 'string'],
             [['user_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['name'], 'string', 'max' => 255],
-            [['marking'], 'string', 'max' => 15],
-            [['surface', 'category'], 'string', 'max' => 1],
-            [['status'], 'string', 'max' => 2],
-            [['marking'], 'unique'],
         ];
     }
 
@@ -64,26 +62,21 @@ class FlightStripsSearch extends FlightStrips
      */
     public function search($params)
     {
-        $query = Plane::find()
-            ->with([
-                'type',
-                'carrier',
-            ]);
+        $query = FlightStrips::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' =>false,
             'sort' => [
                 'defaultOrder' => [
-                    'registration_code' => SORT_ASC,
+                    'marking' => SORT_ASC,
                 ],
             ],
         ]);
 
         $this->load($params);
-
-        $dataProvider->pagination->pageSize = $this->pageSize !== null ? $this->pageSize : Yii::$app->params['employee.gridView.pagination.pageSizeLimit.default'];
 
         if (!$this->validate()) {
             return $dataProvider;
@@ -92,14 +85,24 @@ class FlightStripsSearch extends FlightStrips
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'type_id' => $this->type_id,
-            'carrier_id' => $this->carrier_id,
-            'status_location' => $this->status_location,
-            'status_preparation' => $this->status_preparation,
-
+            'surface' => $this->surface,
+            'length_NDR' => $this->length_NDR,
+            'bias_threshold' => $this->bias_threshold,
+            'length_KSH' => $this->length_KSH,
+            'length_KZB' => $this->length_KZB,
+            'length_VZ' => $this->length_VZ,
+            'width' => $this->width,
+            'width_sidebar_safety' => $this->width_sidebar_safety,
+            'status' => $this->status,
+            'category' => $this->category,
+            'user_id' => $this->user_id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'registration_code', $this->registration_code]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'marking', $this->marking])
+            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

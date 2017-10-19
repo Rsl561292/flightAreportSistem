@@ -5,10 +5,10 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
 use dosamigos\ckeditor\CKEditor;
-use common\models\TypesPlanes;
+use common\models\FlightStrips;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\TypesPlanes */
+/* @var $model common\models\FlightStrips */
 /* @var $form yii\widgets\ActiveForm */
 
 $this->registerJs("
@@ -19,7 +19,7 @@ $this->registerJs("
 <div class="carrier-form">
     <?php
     Pjax::begin([
-        'id' => 'plane-types-grid',
+        'id' => 'flight-strips-grid',
         'timeout' => false,
         'enablePushState' => false,
         'clientOptions' => [
@@ -27,7 +27,7 @@ $this->registerJs("
         ],
     ]);
     $form = ActiveForm::begin([
-        'id' => 'plane-types-form',
+        'id' => 'flight-strips-form',
         'enableClientValidation' => false,
         'enableAjaxValidation' => false,
         'validateOnSubmit' => true,
@@ -67,7 +67,7 @@ $this->registerJs("
 
                     <div class="row">
                         <div class="col-sm-8 col-lg-8">
-                            <?= $form->field($model, 'full_name_type')->textInput([
+                            <?= $form->field($model, 'name')->textInput([
                                 'class' => 'form-control maxlength-handler',
                                 'maxlength' => 255,
                             ]) ?>
@@ -76,22 +76,30 @@ $this->registerJs("
                             <div class="box-margin-left-5px">
                                 <?= $form->field($model, 'marking')->textInput([
                                     'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 30,
+                                    'maxlength' => 15,
                                 ]) ?>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'kind')->dropDownList(TypesPlanes::getKindList(), [
+                        <div class="col-sm-4 col-lg-4">
+                            <?= $form->field($model, 'surface')->dropDownList(FlightStrips::getSurfaceList(), [
                                 'class' => 'form-control',
                                 'prompt' => '- Вибір -',
                             ]); ?>
                         </div>
-                        <div class="col-sm-6 col-lg-6">
+                        <div class="col-sm-4 col-lg-4">
                             <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'category_plane')->dropDownList(TypesPlanes::getCategoryList(), [
+                                <?= $form->field($model, 'category')->dropDownList(FlightStrips::getCategoryList(), [
+                                    'class' => 'form-control',
+                                    'prompt' => '- Вибір -',
+                                ]); ?>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-lg-4">
+                            <div class="box-margin-left-5px">
+                                <?= $form->field($model, 'status')->dropDownList(FlightStrips::getStatusList(), [
                                     'class' => 'form-control',
                                     'prompt' => '- Вибір -',
                                 ]); ?>
@@ -101,53 +109,17 @@ $this->registerJs("
 
                     <div class="row">
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'length')->input('number', [
+                            <?= $form->field($model, 'length_NDR')->input('number', [
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'wingspan')->input('number', [
+                            <?= $form->field($model, 'width')->input('number', [
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'need_length_trip')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'weight_empty_plane')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'max_take_off_mass')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'max_load')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ])->label('Допустиме навантаження') ?>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'max_stock_fuel')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'fuel_costs_empty')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'fuel_costs_unit_weight')->input('number', [
+                            <?= $form->field($model, 'width_sidebar_safety')->input('number', [
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
@@ -155,83 +127,29 @@ $this->registerJs("
 
                     <div class="row">
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'max_speed')->input('number', [
+                            <?= $form->field($model, 'bias_threshold')->input('number', [
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'cruising_speed')->input('number', [
+                            <?= $form->field($model, 'length_KSH')->input('number', [
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'max_height')->input('number', [
+                            <?= $form->field($model, 'length_KZB')->input('number', [
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'cruising_height')->input('number', [
+                            <?= $form->field($model, 'length_VZ')->input('number', [
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'max_distance_empty')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'distance_one_load')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'height_fuselage')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'width_fuselage')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'height_salon')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'width_salon')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'max_number_seats')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'seats_business_class')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'count_crew')->input('number', [
-                                'class' => 'form-control maxlength-handler',
-                            ]) ?>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <?= $form->field($model, 'comment')->widget(CKEditor::className(),[
+                        <?= $form->field($model, 'description')->widget(CKEditor::className(),[
                             'options' => [
                                 'rows' => 10
                             ]

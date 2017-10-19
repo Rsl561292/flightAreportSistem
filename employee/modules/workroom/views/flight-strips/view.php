@@ -4,17 +4,17 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\TypesPlanes */
+/* @var $model common\models\FlightStrips */
 
 
 $this->title = 'Перегляд запису';
-$this->params['breadcrumbs'][] = ['label' => 'Моделі ПС', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Льотні смуги', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Моделі ПС';
+$this->params['inscription_object_title'] = 'Льотні смуги';
 $this->params['inscription_object_explanation'] = 'Перегляд запису';
 ?>
 
-<div class="plane-types-view">
+<div class="flight-strips-view">
 
     <div class="row">
         <div class="col-xs-12">
@@ -40,45 +40,34 @@ $this->params['inscription_object_explanation'] = 'Перегляд запису
                         <?= DetailView::widget([
                             'model' => $model,
                             'attributes' => [
-                                'full_name_type',
+                                'name',
                                 'marking',
                                 [
-                                    'attribute' => 'kind',
+                                    'attribute' => 'surface',
                                     'value' => function($model) {
-                                        return $model->getKindName();
+                                        return $model->getSurfaceName();
                                     },
                                 ],
                                 [
-                                    'attribute' => 'category_plane',
+                                    'attribute' => 'category',
                                     'value' => function($model) {
                                         return $model->getCategoryName();
                                     },
                                 ],
-                                'length',
-                                'wingspan',
-                                'need_length_trip',
-                                'weight_empty_plane',
-                                'height_fuselage',
-                                'width_fuselage',
-                                'height_salon',
-                                'width_salon',
-                                'max_take_off_mass',
-                                'max_load',
-                                'cruising_speed',
-                                'max_speed',
-                                'cruising_height',
-                                'max_height',
-                                'max_distance_empty',
-                                'distance_one_load',
-                                'max_stock_fuel',
-                                'fuel_costs_empty',
-                                'fuel_costs_unit_weight',
-                                'max_number_seats',
-                                'seats_business_class',
-                                'count_crew',
-                                'comment',
-                                'created_at',
-                                'updated_at',
+                                [
+                                    'attribute' => 'status',
+                                    'value' => function($model) {
+                                        return $model->getStatusName();
+                                    },
+                                ],
+                                'length_NDR',
+                                'bias_threshold',
+                                'length_KSH',
+                                'length_KZB',
+                                'length_VZ',
+                                'width',
+                                'width_sidebar_safety',
+                                'description',
                             ],
                         ]) ?>
                     </div>
