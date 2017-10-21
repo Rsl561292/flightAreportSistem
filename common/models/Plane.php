@@ -89,7 +89,7 @@ class Plane extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'type_id' => 'Модель',
-            'registration_code' => 'Реєстр. код ПС',
+            'registration_code' => 'Бортовий номер ПС',
             'carrier_id' => 'Власник ПС',
             'status_location' => 'Розташування',
             'status_preparation' => 'Тех. стан',
