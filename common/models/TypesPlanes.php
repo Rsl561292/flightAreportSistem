@@ -15,10 +15,12 @@ use yii\helpers\ArrayHelper;
  * @property string $full_name_type
  * @property string $marking
  * @property string $kind
- * @property string $category_plane
  * @property double $length
  * @property double $wingspan
- * @property string $need_length_trip
+ * @property double $wing_area
+ * @property double $width_chassis
+ * @property double $length_take_off
+ * @property double $length_landing
  * @property double $weight_empty_plane
  * @property double $height_fuselage
  * @property double $width_fuselage
@@ -80,8 +82,8 @@ class TypesPlanes extends \yii\db\ActiveRecord
         return [
             [
                 [
-                    'full_name_type', 'marking', 'kind', 'category_plane', 'length', 'wingspan',
-                    'need_length_trip', 'weight_empty_plane', 'max_take_off_mass', 'max_load',
+                    'full_name_type', 'marking', 'kind', 'length', 'wingspan', 'wing_area', 'width_chassis',
+                    'length_take_off', 'length_landing', 'weight_empty_plane', 'max_take_off_mass', 'max_load',
                     'max_speed', 'max_distance_empty', 'distance_one_load', 'max_stock_fuel',
                     'fuel_costs_empty', 'fuel_costs_unit_weight', 'count_crew'
                 ],
@@ -89,7 +91,8 @@ class TypesPlanes extends \yii\db\ActiveRecord
             ],
             [
                 [
-                    'length', 'wingspan', 'weight_empty_plane', 'height_fuselage',
+                    'length', 'wingspan', 'wing_area', 'width_chassis', 'length_take_off', 'length_landing',
+                    'weight_empty_plane', 'height_fuselage',
                     'width_fuselage', 'height_salon', 'width_salon', 'max_take_off_mass',
                     'max_load', 'cruising_speed', 'max_speed', 'max_distance_empty',
                     'distance_one_load', 'max_stock_fuel', 'fuel_costs_empty',
@@ -103,20 +106,25 @@ class TypesPlanes extends \yii\db\ActiveRecord
             [['max_stock_fuel'], 'validateStockFuelCostsEmpty'],
             [['max_stock_fuel'], 'validateStockFuelUnitWeight'],
             [['fuel_costs_unit_weight'], 'validateFuelUsing'],
+            ['length_take_off', 'validateLengthTakeOff'],
+            ['wingspan', 'validateWingspan'],
+            ['height_fuselage', 'validateHeightFuselage'],
+            ['width_fuselage', 'validateWidthFuselage'],
             [
                 [
-                    'need_length_trip', 'cruising_height', 'max_height',
+                    'cruising_height', 'max_height',
                     'max_number_seats', 'seats_business_class', 'count_crew'
                 ],
                 'integer'
             ],
             [
                 [
-                    'length', 'wingspan', 'weight_empty_plane', 'height_fuselage',
+                    'length', 'wingspan', 'wing_area', 'width_chassis', 'length_take_off',
+                    'length_landing', 'weight_empty_plane', 'height_fuselage',
                     'width_fuselage', 'height_salon', 'width_salon', 'max_take_off_mass',
                     'max_load', 'cruising_speed', 'max_speed', 'max_distance_empty',
                     'distance_one_load', 'max_stock_fuel', 'fuel_costs_empty',
-                    'fuel_costs_unit_weight', 'need_length_trip', 'cruising_height', 'max_height',
+                    'fuel_costs_unit_weight', 'cruising_height', 'max_height',
                     'max_number_seats', 'seats_business_class', 'count_crew'
                 ],
                 'validateIsUnsigned'
@@ -127,9 +135,8 @@ class TypesPlanes extends \yii\db\ActiveRecord
             [['full_name_type'], 'string', 'max' => 255],
             [['full_name_type'], 'unique'],
             [['marking'], 'string', 'max' => 30],
-            [['kind', 'category_plane'], 'string', 'max' => 1],
+            [['kind'], 'string', 'max' => 1],
             [['kind'], 'in', 'range' => array_keys(self::getKindList())],
-            [['category_plane'], 'in', 'range' => array_keys(self::getCategoryList())],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['height_fuselage', 'width_fuselage', 'height_salon', 'width_salon', 'cruising_height', 'max_number_seats', 'seats_business_class'], 'default', 'value' => 0]
@@ -240,6 +247,78 @@ class TypesPlanes extends \yii\db\ActiveRecord
         }
     }
 
+    public function validateLengthTakeOff($attribute)
+    {
+        if (!$this->hasErrors('length_take_off') && !$this->hasErrors('length_landing')) {
+
+            if (floatval($this->length_take_off) <= floatval($this->length_landing)) {
+                $labelList = $this->attributeLabels();
+
+                $this->addError($attribute, 'Значення поля '.$labelList['length_take_off'].' має бути більшим за значення поля '.$labelList['length_landing']);
+            }
+        }
+    }
+
+    public function validateWingspan($attribute)
+    {
+        if (!$this->hasErrors('wingspan')) {
+
+            if (!$this->hasErrors('width_chassis') && (floatval($this->wingspan) <= floatval($this->width_chassis))) {
+
+                $labelList = $this->attributeLabels();
+
+                $this->addError($attribute, 'Значення поля '.$labelList['wingspan'].' має бути більшим за значення поля '.$labelList['width_chassis']);
+
+                return true;
+            }
+
+            if (!$this->hasErrors('width_fuselage') && (floatval($this->wingspan) <= floatval($this->width_fuselage))) {
+
+                $labelList = $this->attributeLabels();
+
+                $this->addError($attribute, 'Значення поля '.$labelList['wingspan'].' має бути більшим за значення поля '.$labelList['width_fuselage']);
+
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    public function validateWidthFuselage($attribute)
+    {
+        if (!$this->hasErrors('width_fuselage')) {
+
+            if (!$this->hasErrors('width_salon') && (floatval($this->width_fuselage) <= floatval($this->width_salon)) && floatval($this->width_salon) > 0) {
+
+                $labelList = $this->attributeLabels();
+
+                $this->addError($attribute, 'Значення поля '.$labelList['width_fuselage'].' має бути більшим за значення поля '.$labelList['width_salon']);
+
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    public function validateHeightFuselage($attribute)
+    {
+        if (!$this->hasErrors('height_fuselage')) {
+
+            if (!$this->hasErrors('height_salon') && (floatval($this->height_fuselage) <= floatval($this->height_salon)) && floatval($this->height_salon) > 0) {
+
+                $labelList = $this->attributeLabels();
+
+                $this->addError($attribute, 'Значення поля '.$labelList['height_fuselage'].' має бути більшим за значення поля '.$labelList['height_salon']);
+
+                return true;
+            }
+        }
+
+        return true;
+    }
+
     public function validateMaxNumberSeats($attribute)
     {
         if (!$this->hasErrors('max_number_seats')) {
@@ -274,10 +353,12 @@ class TypesPlanes extends \yii\db\ActiveRecord
             'full_name_type' => 'Найменування',
             'marking' => 'Позначення',
             'kind' => 'Тип навантаження',
-            'category_plane' => 'Категорія',
-            'length' => 'Довжина ПС',
+            'length' => 'Довжина ПС(м)',
             'wingspan' => 'Розмах крил(м)',
-            'need_length_trip' => 'Необхідна довжина ЗПС(м)',
+            'wing_area' => 'Площа крил(м2)',
+            'width_chassis' => 'Ширина шасі(м)',
+            'length_take_off' => 'Зльотна довжина ЗПС(м)',
+            'length_landing' => 'Посадочна довжина ЗПС(м)',
             'weight_empty_plane' => 'Вага ПС(кг)',
             'height_fuselage' => 'Висота фюзиляжу(м)',
             'width_fuselage' => 'Ширина  фюзиляжу(м)',
@@ -303,6 +384,25 @@ class TypesPlanes extends \yii\db\ActiveRecord
         ];
     }
 
+    public function beforeDelete()
+    {
+        if (parent::beforeDelete()) {
+
+            $count = Plane::find()
+                ->where(['type_id' => $this->id])
+                ->count();
+
+            if ($count > 0) {
+                Yii::$app->session->setFlash('error', 'Ви не можете видалити дану модель, оскільки у БД записано наступну кількість ПК даної моделі: ' . $count . '.');
+            } else {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
     //====================================================================================
     public function getPlane()
     {
@@ -321,21 +421,6 @@ class TypesPlanes extends \yii\db\ActiveRecord
     public function getKindName()
     {
         return ArrayHelper::getValue(self::getKindList(), $this->kind, 'Невизначено');
-    }
-
-    public static function getCategoryList()
-    {
-        return [
-            self::CATEGORY_A => 'A',
-            self::CATEGORY_B => 'B',
-            self::CATEGORY_C => 'C',
-            self::CATEGORY_D => 'D',
-        ];
-    }
-
-    public function getCategoryName()
-    {
-        return ArrayHelper::getValue(self::getCategoryList(), $this->category_plane, 'Невизначено');
     }
 
     public static function getAllRecordListId()

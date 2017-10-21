@@ -23,7 +23,8 @@ class PlaneTypesSearch extends TypesPlanes
         return [
             [
                 [
-                    'length', 'wingspan', 'weight_empty_plane', 'height_fuselage',
+                    'length', 'wingspan', 'wing_area', 'width_chassis', 'length_take_off',
+                    'length_landing', 'weight_empty_plane', 'height_fuselage',
                     'width_fuselage', 'height_salon', 'width_salon', 'max_take_off_mass',
                     'max_load', 'cruising_speed', 'max_speed', 'max_distance_empty',
                     'distance_one_load', 'max_stock_fuel', 'fuel_costs_empty',
@@ -33,7 +34,7 @@ class PlaneTypesSearch extends TypesPlanes
             ],
             [
                 [
-                    'need_length_trip', 'cruising_height', 'max_height',
+                    'cruising_height', 'max_height',
                     'max_number_seats', 'seats_business_class', 'count_crew'
                 ],
                 'integer'
@@ -41,7 +42,7 @@ class PlaneTypesSearch extends TypesPlanes
             [['full_name_type'], 'string', 'max' => 255],
             [['full_name_type'], 'unique'],
             [['marking'], 'string', 'max' => 30],
-            [['kind', 'category_plane'], 'string', 'max' => 1],
+            [['kind'], 'string', 'max' => 1],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -92,10 +93,12 @@ class PlaneTypesSearch extends TypesPlanes
         // grid filtering conditions
         $query->andFilterWhere([
             'kind' => $this->kind,
-            'category_plane' => $this->category_plane,
             'length' => $this->length,
             'wingspan' => $this->wingspan,
-            'need_length_trip' => $this->need_length_trip,
+            'wing_area' => $this->wing_area,
+            'width_chassis' => $this->width_chassis,
+            'length_take_off' => $this->length_take_off,
+            'length_landing' => $this->length_landing,
             'weight_empty_plane' => $this->weight_empty_plane,
             'height_fuselage' => $this->height_fuselage,
             'width_fuselage' => $this->width_fuselage,

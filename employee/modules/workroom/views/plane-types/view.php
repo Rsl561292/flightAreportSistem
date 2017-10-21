@@ -48,15 +48,12 @@ $this->params['inscription_object_explanation'] = 'Перегляд запису
                                         return $model->getKindName();
                                     },
                                 ],
-                                [
-                                    'attribute' => 'category_plane',
-                                    'value' => function($model) {
-                                        return $model->getCategoryName();
-                                    },
-                                ],
                                 'length',
                                 'wingspan',
-                                'need_length_trip',
+                                'wing_area',
+                                'width_chassis',
+                                'length_take_off',
+                                'length_landing',
                                 'weight_empty_plane',
                                 'height_fuselage',
                                 'width_fuselage',

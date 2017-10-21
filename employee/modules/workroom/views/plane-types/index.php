@@ -25,7 +25,7 @@ $this->params['inscription_object_explanation'] = 'Список моделей �
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Додати нової моделі ПС', ['create'], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Додати нову модель ПС', ['create'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
 
@@ -83,16 +83,6 @@ $this->params['inscription_object_explanation'] = 'Список моделей �
                                     'filter' => Html::activeDropDownList($searchModel, 'kind', TypesPlanes::getKindList(), [
                                         'class' => 'form-control form-filter input-sm',
                                         'prompt' => '- Всі типи -'
-                                    ]),
-                                ],
-                                [
-                                    'attribute' => 'category_plane',
-                                    'content' => function($model) {
-                                        return $model->getCategoryName();
-                                    },
-                                    'filter' => Html::activeDropDownList($searchModel, 'category_plane', TypesPlanes::getCategoryList(), [
-                                        'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Всі категорії -'
                                     ]),
                                 ],
                             ],
