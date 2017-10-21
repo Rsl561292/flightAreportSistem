@@ -130,7 +130,7 @@ $this->registerJs("
                         </div>
                         <div class="col-sm-3 col-lg-3">
                             <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'email')->textInput([
+                                <?= $form->field($model, 'email')->input('email', [
                                     'class' => 'form-control maxlength-handler',
                                     'maxlength' => 100,
                                 ]) ?>

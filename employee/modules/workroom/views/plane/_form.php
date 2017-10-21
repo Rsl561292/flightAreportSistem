@@ -22,7 +22,7 @@ $this->registerJs("
 <div class="plane-form">
     <?php
     Pjax::begin([
-        'id' => 'plane-types-grid',
+        'id' => 'plane-grid',
         'timeout' => false,
         'enablePushState' => false,
         'clientOptions' => [

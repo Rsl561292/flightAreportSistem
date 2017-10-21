@@ -16,7 +16,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
 
 ?>
 
-<div class="regions-index">
+<div class="carrier-index">
 
     <div class="row">
         <div class="col-xs-12">
@@ -34,7 +34,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                     <div class="table-responsive table-products">
                         <?php
                         Pjax::begin([
-                            'id' => 'registration-desk-grid',
+                            'id' => 'carrier-grid',
                             'timeout' => false,
                             'enablePushState' => false,
                             'clientOptions' => [
@@ -52,7 +52,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                             'columns' => [
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{delete} {update}',
+                                    'template' => '{delete} {update} {view}',
                                     'header' => Html::a('<i class="fa fa-refresh"></i> Оновити', ['index'], ['class' => 'btn red']),
                                     'contentOptions' => ['class' => 'action-column'],
                                 ],
@@ -80,7 +80,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                                 [
                                     'attribute' => 'country_id',
                                     'content' => function($model) {
-                                        return Html::encode($model->country->name);
+                                        return !empty($model->country) ? Html::encode($model->country->name) : '';
                                     },
                                     'filter' => Html::activeDropDownList($searchModel, 'country_id', GisCountry::getActiveCountryListId(), [
                                         'class' => 'form-control form-filter input-sm',

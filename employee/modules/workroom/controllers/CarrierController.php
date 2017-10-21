@@ -70,8 +70,20 @@ class CarrierController extends Controller
      */
     public function actionView($id)
     {
+        $model = Carrier::find()
+            ->with([
+                'country',
+                'region',
+            ])
+            ->where(['id' => $id])
+            ->one();
+
+        if ($model === null) {
+            throw new NotFoundHttpException('Запрошувана сторінка не існує.');
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 

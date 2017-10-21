@@ -99,6 +99,25 @@ class Carrier extends \yii\db\ActiveRecord
         ];
     }
 
+    public function beforeDelete()
+    {
+        if (parent::beforeDelete()) {
+
+            $count = Plane::find()
+                ->where(['carrier_id' => $this->id])
+                ->count();
+
+            if ($count > 0) {
+                Yii::$app->session->setFlash('error', 'Ви не можете видалити авіаперевізника з найменуванням \''.$this->name.'\', оскільки у БД зберігається інформація про наступну кількість ПС даного авіаперевізника: ' . $count . '.');
+            } else {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
     //========================================================================================
     public function getCountry()
     {

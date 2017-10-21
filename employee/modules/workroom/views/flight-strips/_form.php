@@ -109,17 +109,17 @@ $this->registerJs("
 
                     <div class="row">
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'length_NDR')->input('number', [
+                            <?= $form->field($model, 'length_NDR')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'width')->input('number', [
+                            <?= $form->field($model, 'width')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'width_sidebar_safety')->input('number', [
+                            <?= $form->field($model, 'width_sidebar_safety')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
@@ -127,22 +127,22 @@ $this->registerJs("
 
                     <div class="row">
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'bias_threshold')->input('number', [
+                            <?= $form->field($model, 'bias_threshold')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'length_KSH')->input('number', [
+                            <?= $form->field($model, 'length_KSH')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'length_KZB')->input('number', [
+                            <?= $form->field($model, 'length_KZB')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>
                         <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'length_VZ')->input('number', [
+                            <?= $form->field($model, 'length_VZ')->textInput([
                                 'class' => 'form-control maxlength-handler',
                             ]) ?>
                         </div>

@@ -78,7 +78,7 @@ class PlaneController extends Controller
             ->one();
 
         if ($model === null) {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException('Запрошувана сторінка не існує.');
         }
 
         return $this->render('view', [
