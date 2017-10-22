@@ -5,18 +5,19 @@ use yii\widgets\Pjax;
 use yii\grid\GridView;
 use common\models\GisCountry;
 use common\models\GisRegions;
+use common\models\Airports;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Авіаперевізники';
+$this->title = 'Аеропорти';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Авіаперевізники';
-$this->params['inscription_object_explanation'] = 'Список авіаперевізників';
+$this->params['inscription_object_title'] = 'Аеропорти';
+$this->params['inscription_object_explanation'] = 'Список аеропортів';
 
 ?>
 
-<div class="carrier-index">
+<div class="airports-index">
 
     <div class="row">
         <div class="col-xs-12">
@@ -26,7 +27,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Додати нового авіаперевізника', ['create'], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Додати новий аеропорт', ['create'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
 
@@ -34,7 +35,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                     <div class="table-responsive table-products">
                         <?php
                         Pjax::begin([
-                            'id' => 'carrier-grid',
+                            'id' => 'airports-grid',
                             'timeout' => false,
                             'enablePushState' => false,
                             'clientOptions' => [
@@ -57,14 +58,13 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                                     'contentOptions' => ['class' => 'action-column'],
                                 ],
                                 [
-                                    'attribute' => 'identification_code',
-                                    'label' => 'Ідент. коде',
+                                    'attribute' => 'code_iata',
                                     'content' => function($model) {
-                                        return $model->identification_code;
+                                        return $model->code_iata;
                                     },
-                                    'filter' => Html::activeTextInput($searchModel, 'identification_code', [
+                                    'filter' => Html::activeTextInput($searchModel, 'code_iata', [
                                         'class' => 'form-control form-filter input-sm',
-                                        'placeholder' => $searchModel->getAttributeLabel('identification_code'),
+                                        'placeholder' => $searchModel->getAttributeLabel('code_iata'),
                                     ]),
                                 ],
                                 [
@@ -84,7 +84,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                                     },
                                     'filter' => Html::activeDropDownList($searchModel, 'country_id', GisCountry::getActiveCountryListId(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Країна -'
+                                        'prompt' => '- Всі країни -'
                                     ]),
                                 ],
                                 [
@@ -93,10 +93,10 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                                         $class = 'label-primary';
 
                                         switch ($model->status) {
-                                            case GisRegions::STATUS_ACTIVE:
+                                            case Airports::STATUS_OPEN:
                                                 $class = 'label-success';
                                                 break;
-                                            case GisRegions::STATUS_INACTIVE:
+                                            case Airports::STATUS_CLOSE:
                                                 $class = 'label-danger';
                                                 break;
                                         }
@@ -105,7 +105,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                                     },
                                     'filter' => Html::activeDropDownList($searchModel, 'status', GisRegions::getStatusList(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Статус -'
+                                        'prompt' => '- Всі статуси -'
                                     ]),
                                 ],
                             ],

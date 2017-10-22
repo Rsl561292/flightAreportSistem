@@ -22,7 +22,7 @@ class m170806_141839_create_tbl_airports extends Migration
             'other_address' => $this->string(),
             'distance_to_airport' => $this->float()->unsigned()->notNull()->defaultValue(0),
             'begin_commandant_time' => $this->time(),
-            'commandant_time' => $this->smallInteger(2)->unsigned()->defaultValue(0),
+            'commandant_time' => $this->smallInteger(4)->unsigned()->defaultValue(0),
             'status' => $this->char(2)->notNull()->defaultValue('0'),
             'user_id' => $this->integer()->unsigned()->null(),
             'created_at' => $this->dateTime(),

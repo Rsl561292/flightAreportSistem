@@ -3,6 +3,10 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_airports".
@@ -25,12 +29,27 @@ use Yii;
  */
 class Airports extends \yii\db\ActiveRecord
 {
+    const STATUS_OPEN = '1';
+    const STATUS_CLOSE = '2';
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'tbl_airports';
+        return '{{%airports}}';
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => 'updated_at',
+                'value' => new Expression('TIME(NOW())'),
+            ],
+        ];
     }
 
     /**
@@ -39,15 +58,49 @@ class Airports extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['code_iata', 'name', 'country_id', 'city'], 'required'],
+            [['code_iata', 'name', 'country_id', 'city', 'distance_to_airport', 'status'], 'required'],
             [['country_id', 'region_id', 'commandant_time', 'user_id'], 'integer'],
+            ['commandant_time', 'validateCommandantTime'],
+            [['country_id'], 'in', 'range' => array_keys(GisCountry::getAllCountryListId())],
+            [['region_id'], 'in', 'range' => array_keys(GisRegions::getAllRegionsListId())],
+            [['commandant_time'], 'compare', 'compareValue' => 0, 'operator' => '>=', 'type' => 'integer'],
+            [['commandant_time'], 'compare', 'compareValue' => 1440, 'operator' => '<', 'type' => 'integer'],
             [['distance_to_airport'], 'number'],
-            [['begin_commandant_time', 'created_at', 'updated_at'], 'safe'],
+            [['distance_to_airport'], 'compare', 'compareValue' => 0, 'operator' => '>', 'type' => 'number'],
             [['code_iata', 'code_ikao'], 'string', 'max' => 4],
+            [['code_iata'], 'unique'],
             [['name', 'city', 'other_address'], 'string', 'max' => 255],
             [['status'], 'string', 'max' => 2],
-            [['code_iata'], 'unique'],
+            [['status'], 'in', 'range' => array_keys(self::getStatusList())],
+            [['begin_commandant_time', 'created_at', 'updated_at'], 'safe'],
+            ['commandant_time', 'default', 'value' => 0],
         ];
+    }
+
+    public function validateCommandantTime($attribute)
+    {
+        if (!$this->hasErrors('commandant_time')) {
+
+            if (!$this->hasErrors('begin_commandant_time') && (intval($this->commandant_time) == 0) && (strlen($this->begin_commandant_time) !== 0)) {
+
+                $labelList = $this->attributeLabels();
+
+                $this->addError($attribute, 'Якщо задано значення поля '.$labelList['begin_commandant_time'].', то значення поля '.$labelList['commandant_time'].' має бути більше значення "0".');
+
+                return true;
+            }
+
+            if (!$this->hasErrors('begin_commandant_time') && (strlen($this->begin_commandant_time) == 0) && intval($this->commandant_time) > 0) {
+
+                $labelList = $this->attributeLabels();
+
+                $this->addError($attribute, 'Значення поля '.$labelList['commandant_time'].' не може бути більше "0", коли не задано значення поля '.$labelList['begin_commandant_time']);
+
+                return true;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -57,20 +110,84 @@ class Airports extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'code_iata' => 'Code Iata',
-            'code_ikao' => 'Code Ikao',
-            'name' => 'Name',
-            'country_id' => 'Country ID',
-            'region_id' => 'Region ID',
-            'city' => 'City',
-            'other_address' => 'Other Address',
-            'distance_to_airport' => 'Distance To Airport',
-            'begin_commandant_time' => 'Begin Commandant Time',
-            'commandant_time' => 'Commandant Time',
-            'status' => 'Status',
-            'user_id' => 'User ID',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'code_iata' => 'Код IATA',
+            'code_ikao' => 'Код IKAO',
+            'name' => 'Найменування',
+            'country_id' => 'Країна',
+            'region_id' => 'Штат/регіон/обл.',
+            'city' => 'Місто',
+            'other_address' => 'Повна адреса',
+            'distance_to_airport' => 'Відстань до аеропорту(м)',
+            'begin_commandant_time' => 'Початок комендант. часу',
+            'commandant_time' => 'Комендант. час триває(хв)',
+            'status' => 'Статус',
+            'user_id' => 'Користувач',
+            'created_at' => 'Дата та час створення запису',
+            'updated_at' => 'Дата та час останнього редагування запису',
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+
+            if($this->user_id === null) {
+                $this->user_id = Yii::$app->user->id;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    //========================================================================================
+    public function getCountry()
+    {
+        return $this->hasOne(GisCountry::className(), ['id' => 'country_id']);
+    }
+
+    public function getRegion()
+    {
+        return $this->hasOne(GisRegions::className(), ['id' => 'region_id']);
+    }
+
+    //==========================================================================================
+    public static function getStatusList()
+    {
+        return [
+            self::STATUS_OPEN => 'Відкритий',
+            self::STATUS_CLOSE => 'Закритий',
+        ];
+    }
+
+    public function getStatusName()
+    {
+        return ArrayHelper::getValue(self::getStatusList(), $this->status, 'Невизначено');
+    }
+
+    public static function getActiveRecordListId()
+    {
+        $list = (new Query())
+            ->select('name')
+            ->from(self::tableName())
+            ->where(['status' => self::STATUS_OPEN])
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
+
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('name')
+            ->from(self::tableName())
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
     }
 }

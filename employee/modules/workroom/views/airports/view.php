@@ -4,17 +4,17 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Carrier */
+/* @var $model common\models\Airports */
 
 
 $this->title = 'Перегляд запису';
-$this->params['breadcrumbs'][] = ['label' => 'Авіаперевізники', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Аеропорти', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Авіаперевізники';
+$this->params['inscription_object_title'] = 'Аеропорти';
 $this->params['inscription_object_explanation'] = 'Перегляд запису';
 ?>
 
-<div class="plane-view">
+<div class="airports-view">
 
     <div class="row">
         <div class="col-xs-12">
@@ -24,8 +24,8 @@ $this->params['inscription_object_explanation'] = 'Перегляд запису
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                        <?= Html::a('Редагувати', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Видалити', ['delete', 'id' => $model->id], [
                             'class' => 'btn btn-danger',
                             'data' => [
                                 'confirm' => 'Ви впевнені, що хочете видалити цей запис?',
@@ -40,7 +40,8 @@ $this->params['inscription_object_explanation'] = 'Перегляд запису
                         <?= DetailView::widget([
                             'model' => $model,
                             'attributes' => [
-                                'identification_code',
+                                'code_iata',
+                                'code_ikao',
                                 'name',
                                 [
                                     'attribute' => 'country_id',
@@ -56,16 +57,15 @@ $this->params['inscription_object_explanation'] = 'Перегляд запису
                                 ],
                                 'city',
                                 'other_address',
-                                'phone',
-                                'email',
+                                'distance_to_airport',
+                                'begin_commandant_time',
+                                'commandant_time',
                                 [
                                     'attribute' => 'status',
                                     'value' => function($model) {
                                         return $model->getStatusName();
                                     },
                                 ],
-                                'short_description',
-                                'description',
                             ],
                         ]) ?>
                     </div>

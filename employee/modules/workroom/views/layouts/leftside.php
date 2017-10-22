@@ -79,6 +79,12 @@ use yii\helpers\Url;
                             ]
                         ],
                         [
+                            'label' => 'Аеропорти',
+                            'icon' => 'fa fa-opencart',
+                            'url' => ['airports/index'],
+                            'active' => $this->context->route == 'airports/index'
+                        ],
+                        [
                             'label' => 'Авіаперевізники',
                             'icon' => 'fa fa-fighter-jet',
                             'url' => ['carrier/index'],

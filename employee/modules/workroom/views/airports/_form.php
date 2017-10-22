@@ -4,13 +4,12 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
-use dosamigos\ckeditor\CKEditor;
 use common\models\GisCountry;
 use common\models\GisRegions;
-use common\models\Carrier;
+use common\models\Airports;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Carrier */
+/* @var $model common\models\Airports */
 /* @var $form yii\widgets\ActiveForm */
 
 $this->registerJs("
@@ -19,10 +18,10 @@ $this->registerJs("
 ", \yii\web\View::POS_READY);
 ?>
 
-<div class="carrier-form">
+<div class="airports-form">
     <?php
     Pjax::begin([
-        'id' => 'carrier-grid',
+        'id' => 'airports-grid',
         'timeout' => false,
         'enablePushState' => false,
         'clientOptions' => [
@@ -30,7 +29,7 @@ $this->registerJs("
         ],
     ]);
     $form = ActiveForm::begin([
-        'id' => 'carrier-form',
+        'id' => 'airports-form',
         'enableClientValidation' => false,
         'enableAjaxValidation' => false,
         'validateOnSubmit' => true,
@@ -69,19 +68,23 @@ $this->registerJs("
                     <?php endif;?>
 
                     <div class="row">
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'identification_code')->textInput([
+                        <div class="col-sm-3 col-lg-3">
+                            <?= $form->field($model, 'code_iata')->textInput([
                                 'class' => 'form-control maxlength-handler',
-                                'maxlength' => 30,
-                            ])->label('Ідент. коде') ?>
+                                'maxlength' => 4,
+                            ])?>
                         </div>
-                        <div class="col-sm-8 col-lg-8">
-                            <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'name')->textInput([
-                                    'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 255,
-                                ]) ?>
-                            </div>
+                        <div class="col-sm-3 col-lg-3">
+                            <?= $form->field($model, 'code_ikao')->textInput([
+                                'class' => 'form-control maxlength-handler',
+                                'maxlength' => 4,
+                            ])?>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'name')->textInput([
+                                'class' => 'form-control maxlength-handler',
+                                'maxlength' => 255,
+                            ]) ?>
                         </div>
                     </div>
 
@@ -122,49 +125,33 @@ $this->registerJs("
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'phone')->textInput([
+                        <div class="col-sm-4 col-lg-4">
+                            <?= $form->field($model, 'distance_to_airport')->input('number', [
                                 'class' => 'form-control maxlength-handler',
-                                'maxlength' => 20,
                             ]) ?>
                         </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'email')->input('email', [
-                                    'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 100,
-                                ]) ?>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-6">
-                            <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'other_address')->textInput([
-                                    'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 255,
-                                ]) ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <?= $form->field($model, 'short_description')->widget(CKEditor::className(),[
-                            'options' => [
-                                'rows' => 4
-                            ]
-                        ]) ?>
-                    </div>
-
-                    <div class="row">
-                        <?= $form->field($model, 'description')->widget(CKEditor::className(),[
-                            'options' => [
-                                'rows' => 10
-                            ]
-                        ]) ?>
-                    </div>
-
-                    <div class="row">
                         <div class="col-sm-8 col-lg-8">
-                            <?= $form->field($model, 'status')->dropDownList(Carrier::getStatusList(), [
+                            <?= $form->field($model, 'other_address')->textInput([
+                                'class' => 'form-control maxlength-handler',
+                                'maxlength' => 255,
+                            ]) ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4 col-lg-4">
+                            <?= $form->field($model, 'begin_commandant_time')->input('time', [
+                                'class' => 'form-control maxlength-handler',
+                                'maxlength' => 255,
+                            ]) ?>
+                        </div>
+                        <div class="col-sm-4 col-lg-4">
+                            <?= $form->field($model, 'commandant_time')->input('number', [
+                                'class' => 'form-control maxlength-handler',
+                            ]) ?>
+                        </div>
+                        <div class="col-sm-4 col-lg-4">
+                            <?= $form->field($model, 'status')->dropDownList(Airports::getStatusList(), [
                                 'class' => 'form-control',
                                 'prompt' => '- Вибір -',
                             ]); ?>

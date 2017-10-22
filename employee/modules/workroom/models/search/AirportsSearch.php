@@ -21,15 +21,13 @@ class AirportsSearch extends Airports
     public function rules()
     {
         return [
-            [['short_description', 'description'], 'string'],
-            [['country_id', 'region_id'], 'integer'],
-            [['identification_code'], 'string', 'max' => 30],
+            [['id', 'pageSize', 'country_id', 'region_id', 'commandant_time', 'user_id'], 'integer'],
+            [['distance_to_airport'], 'number'],
+            [['code_iata', 'code_ikao'], 'string', 'max' => 4],
+            [['code_iata'], 'unique'],
             [['name', 'city', 'other_address'], 'string', 'max' => 255],
-            [['phone'], 'string', 'max' => 20],
-            [['email'], 'string', 'max' => 100],
-            ['email', 'email'],
-            [['status'], 'string', 'max' => 1],
-            [['created_at', 'updated_at'], 'safe'],
+            [['status'], 'string', 'max' => 2],
+            [['begin_commandant_time', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -80,19 +78,21 @@ class AirportsSearch extends Airports
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'country_id' => $this->country_id,
+            'region_id' => $this->region_id,
+            'distance_to_airport' => $this->distance_to_airport,
+            'begin_commandant_time' => $this->begin_commandant_time,
+            'commandant_time' => $this->commandant_time,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'identification_code', $this->identification_code])
+        $query->andFilterWhere(['like', 'code_iata', $this->code_iata])
+            ->andFilterWhere(['like', 'code_ikao', $this->code_ikao])
             ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'phone', $this->phone])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'other_address', $this->other_address])
             ->andFilterWhere(['like', 'city', $this->city])
-            ->andFilterWhere(['like', 'short_description', $this->short_description])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['like', 'other_address', $this->other_address]);
 
         return $dataProvider;
     }
