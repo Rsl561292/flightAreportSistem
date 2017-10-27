@@ -5,12 +5,12 @@ namespace employee\modules\workroom\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Carrier;
+use common\models\Flights;
 
 /**
- * CarrierSearch represents the model behind the search form about `common\models\Carrier.
+ * FlightsSearch represents the model behind the search form about `common\models\Flights.
  */
-class CarrierSearch extends Carrier
+class FlightsSearch extends Flights
 {
 
     public $pageSize;
@@ -21,15 +21,9 @@ class CarrierSearch extends Carrier
     public function rules()
     {
         return [
-            [['short_description', 'description'], 'string'],
-            [['country_id', 'region_id'], 'integer'],
-            [['identification_code'], 'string', 'max' => 30],
-            [['name', 'city', 'other_address'], 'string', 'max' => 255],
-            [['phone'], 'string', 'max' => 20],
-            [['email'], 'string', 'max' => 100],
-            ['email', 'email'],
-            [['status'], 'string', 'max' => 1],
-            [['created_at', 'updated_at'], 'safe'],
+            [['datetime_plane', 'datetime_fact', 'begin_registration_plan', 'end_registration_plan', 'begin_registration_fact', 'end_registration_fact', 'begin_landing_plan', 'end_landing_plan', 'begin_landing_fact', 'end_landing_fact'], 'safe'],
+            [['pageSize', 'plane_id', 'strip_id', 'airport_id'], 'integer'],
+            [['type', 'direction', 'status', 'visible'], 'string', 'max' => 1],
         ];
     }
 
