@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -96,6 +97,7 @@ class Plane extends \yii\db\ActiveRecord
         ];
     }
 
+    //=================================================================================
     public function getType()
     {
         return $this->hasOne(TypesPlanes::className(), ['id' => 'type_id']);
@@ -106,6 +108,12 @@ class Plane extends \yii\db\ActiveRecord
         return $this->hasOne(Carrier::className(), ['id' => 'carrier_id']);
     }
 
+    public function getFlights()
+    {
+        return $this->hasMany(Flights::className(), ['plane_id' => 'id']);
+    }
+
+    //=================================================================================
     public static function getStatusLocationList()
     {
         return [
@@ -131,5 +139,30 @@ class Plane extends \yii\db\ActiveRecord
     public function getStatusPreparationName()
     {
         return ArrayHelper::getValue(self::getStatusPreparationList(), $this->status_preparation, 'Невизначено');
+    }
+
+    public static function getActiveRecordListId()
+    {
+        $list = (new Query())
+            ->select('registration_code')
+            ->from(self::tableName())
+            ->where(['status_preparation' => self::STATUS_PREPARATION_IN_WORKING])
+            ->orderBy(['registration_code' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
+
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('registration_code')
+            ->from(self::tableName())
+            ->orderBy(['registration_code' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
     }
 }

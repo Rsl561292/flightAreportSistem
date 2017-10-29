@@ -3,20 +3,20 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
-use common\models\GisCountry;
-use common\models\GisRegions;
+use common\models\Flights;
+use common\models\Airports;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Авіаперевізники';
+$this->title = 'Польоти';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Авіаперевізники';
-$this->params['inscription_object_explanation'] = 'Список авіаперевізників';
+$this->params['inscription_object_title'] = 'Польоти';
+$this->params['inscription_object_explanation'] = 'Список польотів';
 
 ?>
 
-<div class="carrier-index">
+<div class="flights-index">
 
     <div class="row">
         <div class="col-xs-12">
@@ -26,7 +26,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Додати нового авіаперевізника', ['create'], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Додати інформацію про новий політ', ['create'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
 
@@ -34,7 +34,7 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                     <div class="table-responsive table-products">
                         <?php
                         Pjax::begin([
-                            'id' => 'carrier-grid',
+                            'id' => 'flights-grid',
                             'timeout' => false,
                             'enablePushState' => false,
                             'clientOptions' => [
@@ -57,53 +57,59 @@ $this->params['inscription_object_explanation'] = 'Список авіапере
                                     'contentOptions' => ['class' => 'action-column'],
                                 ],
                                 [
-                                    'attribute' => 'identification_code',
-                                    'label' => 'Ідент. коде',
+                                    'attribute' => 'id',
                                     'content' => function($model) {
-                                        return $model->identification_code;
+                                        return $model->id;
                                     },
-                                    'filter' => Html::activeTextInput($searchModel, 'identification_code', [
+                                    'filter' => Html::activeTextInput($searchModel, 'id', [
                                         'class' => 'form-control form-filter input-sm',
-                                        'placeholder' => $searchModel->getAttributeLabel('identification_code'),
+                                        'placeholder' => $searchModel->getAttributeLabel('id'),
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'name',
+                                    'attribute' => 'datetime_plane',
                                     'content' => function($model) {
-                                        return $model->name;
+                                        return $model->datetime_plane;
                                     },
-                                    'filter' => Html::activeTextInput($searchModel, 'name', [
+                                    'filter' => false,
+                                ],
+                                [
+                                    'attribute' => 'type',
+                                    'content' => function($model) {
+                                        return $model->getTypeName();
+                                    },
+                                    'filter' => Html::activeDropDownList($searchModel, 'type', Flights::getTypeList(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'placeholder' => $searchModel->getAttributeLabel('name'),
+                                        'prompt' => '- Всі типи перевезень -'
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'country_id',
+                                    'attribute' => 'direction',
                                     'content' => function($model) {
-                                        return !empty($model->country) ? Html::encode($model->country->name) : '';
+                                        return $model->getDirectionName();
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'country_id', GisCountry::getActiveCountryListId(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'direction', Flights::getDirectionList(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Країна -'
+                                        'prompt' => '- Всі види напрямів -'
+                                    ]),
+                                ],
+                                [
+                                    'attribute' => 'airport_id',
+                                    'content' => function($model) {
+                                        return !empty($model->airport) ? Html::encode($model->airport->name) : '';
+                                    },
+                                    'filter' => Html::activeDropDownList($searchModel, 'airport_id', Airports::getActiveRecordListId(), [
+                                        'class' => 'form-control form-filter input-sm',
+                                        'prompt' => '- Всі аеропорти -'
                                     ]),
                                 ],
                                 [
                                     'attribute' => 'status',
                                     'content' => function($model) {
-                                        $class = 'label-primary';
 
-                                        switch ($model->status) {
-                                            case GisRegions::STATUS_ACTIVE:
-                                                $class = 'label-success';
-                                                break;
-                                            case GisRegions::STATUS_INACTIVE:
-                                                $class = 'label-danger';
-                                                break;
-                                        }
-
-                                        return Html::tag('span', $model->getStatusName(), ['class' => 'label label-sm ' . $class]);
+                                        return $model->getStatusName();
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'status', GisRegions::getStatusList(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'status', Flights::getStatusList(), [
                                         'class' => 'form-control form-filter input-sm',
                                         'prompt' => '- Статус -'
                                     ]),

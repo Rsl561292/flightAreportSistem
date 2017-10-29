@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -224,6 +225,12 @@ class FlightStrips extends \yii\db\ActiveRecord
         return false;
     }
 
+    //====================================================================================
+    public function getFlights()
+    {
+        return $this->hasMany(Flights::className(), ['strip_id' => 'id']);
+    }
+
     //=========================================================================================
     public static function getSurfaceList()
     {
@@ -269,4 +276,28 @@ class FlightStrips extends \yii\db\ActiveRecord
         return ArrayHelper::getValue(self::getCategoryList(), $this->category, 'Невизначено');
     }
 
+    public static function getActiveRecordListId()
+    {
+        $list = (new Query())
+            ->select('marking')
+            ->from(self::tableName())
+            ->where(['status' => self::STATUS_ACTIVE])
+            ->orderBy(['marking' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
+
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('marking')
+            ->from(self::tableName())
+            ->orderBy(['marking' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
 }

@@ -109,6 +109,19 @@ use yii\helpers\Url;
                                 ],
                             ]
                         ],
+                        [
+                            'label' => 'Робота з польотами',
+                            'icon' => 'fa fa-plane',
+                            'url' => '#',
+                            'items' => [
+                                [
+                                    'label' => 'Гріфіки польотів',
+                                    'icon' => 'fa fa-bar-chart',
+                                    'url' => ['flights/index'],
+                                    'active' => $this->context->route == 'flights/index'
+                                ],
+                            ]
+                        ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
                     ],
                 ]

@@ -22,7 +22,7 @@ class FlightsSearch extends Flights
     {
         return [
             [['datetime_plane', 'datetime_fact', 'begin_registration_plan', 'end_registration_plan', 'begin_registration_fact', 'end_registration_fact', 'begin_landing_plan', 'end_landing_plan', 'begin_landing_fact', 'end_landing_fact'], 'safe'],
-            [['pageSize', 'plane_id', 'strip_id', 'airport_id'], 'integer'],
+            [['id', 'pageSize', 'plane_id', 'strip_id', 'airport_id'], 'integer'],
             [['type', 'direction', 'status', 'visible'], 'string', 'max' => 1],
         ];
     }
@@ -48,9 +48,9 @@ class FlightsSearch extends Flights
      */
     public function search($params)
     {
-        $query = Carrier::find()
+        $query = Flights::find()
             ->with([
-                'country'
+                'airport'
             ]);
 
         // add conditions that should always apply here
@@ -59,7 +59,7 @@ class FlightsSearch extends Flights
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
-                    'name' => SORT_ASC,
+                    'begin_registration_plan' => SORT_ASC,
                 ],
             ],
         ]);
@@ -74,19 +74,25 @@ class FlightsSearch extends Flights
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'id' => $this->id,
+            'type' => $this->type,
+            'direction' => $this->direction,
+            'datetime_plane' => $this->datetime_plane,
+            'datetime_fact' => $this->datetime_fact,
+            'plane_id' => $this->plane_id,
+            'strip_id' => $this->strip_id,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'visible' => $this->visible,
+            'airport_id' => $this->airport_id,
+            'begin_registration_plan' => $this->begin_registration_plan,
+            'end_registration_plan' => $this->end_registration_plan,
+            'begin_registration_fact' => $this->begin_registration_fact,
+            'end_registration_fact' => $this->end_registration_fact,
+            'begin_landing_plan' => $this->begin_landing_plan,
+            'end_landing_plan' => $this->end_landing_plan,
+            'begin_landing_fact' => $this->begin_landing_fact,
+            'end_landing_fact' => $this->end_landing_fact,
         ]);
-
-        $query->andFilterWhere(['like', 'identification_code', $this->identification_code])
-            ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'phone', $this->phone])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'other_address', $this->other_address])
-            ->andFilterWhere(['like', 'city', $this->city])
-            ->andFilterWhere(['like', 'short_description', $this->short_description])
-            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

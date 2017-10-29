@@ -1,15 +1,15 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model common\models\GisRegions */
+/* @var $model common\models\Flights */
 
-$this->title = 'Додати нового авіаперевізника';
-$this->params['breadcrumbs'][] = ['label' => 'Авіаперевізники', 'url' => ['index']];
+$this->title = 'Додати новий політ';
+$this->params['breadcrumbs'][] = ['label' => 'Польоти', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Авіаперевізники';
-$this->params['inscription_object_explanation'] = 'Додавання авіаперевізника';
+$this->params['inscription_object_title'] = 'Польоти';
+$this->params['inscription_object_explanation'] = 'Додавання нового польоту';
 ?>
-<div class="carrier-create">
+<div class="flights-create">
 
     <?= $this->render('_form', [
         'model' => $model,

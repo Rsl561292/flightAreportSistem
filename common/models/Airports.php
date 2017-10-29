@@ -152,6 +152,11 @@ class Airports extends \yii\db\ActiveRecord
         return $this->hasOne(GisRegions::className(), ['id' => 'region_id']);
     }
 
+    public function getFlights()
+    {
+        return $this->hasMany(Flights::className(), ['airport_id' => 'id']);
+    }
+
     //==========================================================================================
     public static function getStatusList()
     {

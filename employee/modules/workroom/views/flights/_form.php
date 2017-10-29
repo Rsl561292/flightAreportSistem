@@ -4,25 +4,31 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
-use dosamigos\ckeditor\CKEditor;
-use common\models\GisCountry;
-use common\models\GisRegions;
-use common\models\Carrier;
+use kartik\datetime\DateTimePicker;
+use common\models\Flights;
+use common\models\Plane;
+use common\models\FlightStrips;
+use common\models\Airports;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Carrier */
+/* @var $model common\models\Flights */
 /* @var $form yii\widgets\ActiveForm */
 
 $this->registerJs("
-	$('#" . Html::getInputId($model, 'country_id') . ", #" . Html::getInputId($model, 'region_id') . "').select2();
-	$('#" . Html::getInputId($model, 'status') . "').select2({minimumResultsForSearch: -1});
+	$('#" . Html::getInputId($model, 'plane_id') .
+        ", #" . Html::getInputId($model, 'strip_id') .
+        ", #" . Html::getInputId($model, 'airport_id') . "').select2();
+	$('#" . Html::getInputId($model, 'type') .
+        ", #" . Html::getInputId($model, 'direction') .
+        ", #" . Html::getInputId($model, 'status') .
+        ", #" . Html::getInputId($model, 'visible') . "').select2({minimumResultsForSearch: -1});
 ", \yii\web\View::POS_READY);
 ?>
 
-<div class="carrier-form">
+<div class="flights-form">
     <?php
     Pjax::begin([
-        'id' => 'carrier-grid',
+        'id' => 'flights-grid',
         'timeout' => false,
         'enablePushState' => false,
         'clientOptions' => [
@@ -30,7 +36,7 @@ $this->registerJs("
         ],
     ]);
     $form = ActiveForm::begin([
-        'id' => 'carrier-form',
+        'id' => 'flights-form',
         'enableClientValidation' => false,
         'enableAjaxValidation' => false,
         'validateOnSubmit' => true,
@@ -69,105 +75,119 @@ $this->registerJs("
                     <?php endif;?>
 
                     <div class="row">
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'identification_code')->textInput([
-                                'class' => 'form-control maxlength-handler',
-                                'maxlength' => 30,
-                            ])->label('Ідент. коде') ?>
+                        <div class="col-sm-3 col-lg-3">
+                            <?= $form->field($model, 'type')->dropDownList(Flights::getTypeList(), [
+                                'class' => 'form-control',
+                                'encode' => false,
+                                'prompt' => '- Вибір -'
+                            ]); ?>
                         </div>
-                        <div class="col-sm-8 col-lg-8">
-                            <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'name')->textInput([
-                                    'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 255,
-                                ]) ?>
-                            </div>
+                        <div class="col-sm-3 col-lg-3">
+                            <?= $form->field($model, 'direction')->dropDownList(Flights::getDirectionList(), [
+                                'class' => 'form-control',
+                                'encode' => false,
+                                'prompt' => '- Вибір -'
+                            ]); ?>
+                        </div>
+                        <div class="col-sm-3 col-lg-3">
+                            <?= $form->field($model, 'status')->dropDownList(Flights::getStatusList(), [
+                                'class' => 'form-control',
+                                'encode' => false,
+                                'prompt' => '- Вибір -'
+                            ]); ?>
+                        </div>
+                        <div class="col-sm-3 col-lg-3">
+                            <?= $form->field($model, 'visible')->dropDownList(Flights::getVisibleList(), [
+                                'class' => 'form-control',
+                                'encode' => false,
+                                'prompt' => '- Вибір -'
+                            ]); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'datetime_plane')->widget(DateTimePicker::classname(), [
+                                'class' => 'form-control maxlength-handler',
+                                'options' => ['placeholder' => 'Введіть дату та час ...'],
+                                'pluginOptions' => [
+                                    'autoclose' => true
+                                ]
+                            ]) ?>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'datetime_fact')->widget(DateTimePicker::classname(), [
+                                'class' => 'form-control maxlength-handler',
+                                'options' => ['placeholder' => 'Введіть дату та час ...'],
+                                'pluginOptions' => [
+                                    'autoclose' => true
+                                ]
+                            ]) ?>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'country_id')->dropDownList(GisCountry::getActiveCountryListId(), [
-                                'encode' => false,
-                                'prompt' => '- Вибір -',
-                                'onchange' => '$.get("' . Url::toRoute('/geo/get-regions-list-by-country') . '", {country: $(this).val()}).done(function(response) {
-                                    var regionField = $("#' . Html::getInputId($model, 'region_id') . '");
-
-                                    $(regionField).find("option").remove().end().append($("<option>", {value: "", text: "- Вибір -"}));
-                                    $(regionField).select2("val", "");
-
-                                    if (response.length > 0) {
-                                        $.each(response, function(i, row) {
-                                            $(regionField).append($("<option>", {value: row[0], text: row[1]}));
-                                        });
-                                    }
-                                });',
-                            ]); ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'region_id')->dropDownList(GisRegions::getActiveRegionsListByCountryOnId($model->country_id), [
+                            <?= $form->field($model, 'plane_id')->dropDownList(Plane::getActiveRecordListId(), [
                                 'class' => 'form-control',
                                 'encode' => false,
                                 'prompt' => '- Вибір -'
                             ]); ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
-                            <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'city')->textInput([
-                                    'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 255,
-                                ]) ?>
-                            </div>
+                            <?= $form->field($model, 'strip_id')->dropDownList(FlightStrips::getActiveRecordListId(), [
+                                'class' => 'form-control',
+                                'encode' => false,
+                                'prompt' => '- Вибір -'
+                            ]); ?>
+                        </div>
+                        <div class="col-sm-4 col-lg-4">
+                            <?= $form->field($model, 'airport_id')->dropDownList(Airports::getActiveRecordListId(), [
+                                'class' => 'form-control',
+                                'encode' => false,
+                                'prompt' => '- Вибір -'
+                            ]); ?>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'phone')->textInput([
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'begin_registration_plan')->widget(DateTimePicker::classname(), [
                                 'class' => 'form-control maxlength-handler',
-                                'maxlength' => 20,
+                                'options' => ['placeholder' => 'Введіть дату та час ...'],
+                                'pluginOptions' => [
+                                    'autoclose' => true
+                                ]
                             ]) ?>
                         </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'email')->input('email', [
-                                    'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 100,
-                                ]) ?>
-                            </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'end_registration_plan')->widget(DateTimePicker::classname(), [
+                                'class' => 'form-control maxlength-handler',
+                                'options' => ['placeholder' => 'Введіть дату та час ...'],
+                                'pluginOptions' => [
+                                    'autoclose' => true
+                                ]
+                            ]) ?>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'begin_landing_plan')->widget(DateTimePicker::classname(), [
+                                'class' => 'form-control maxlength-handler',
+                                'options' => ['placeholder' => 'Введіть дату та час ...'],
+                                'pluginOptions' => [
+                                    'autoclose' => true
+                                ]
+                            ]) ?>
                         </div>
                         <div class="col-sm-6 col-lg-6">
-                            <div class="box-margin-left-5px">
-                                <?= $form->field($model, 'other_address')->textInput([
-                                    'class' => 'form-control maxlength-handler',
-                                    'maxlength' => 255,
-                                ]) ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <?= $form->field($model, 'short_description')->widget(CKEditor::className(),[
-                            'options' => [
-                                'rows' => 4
-                            ]
-                        ]) ?>
-                    </div>
-
-                    <div class="row">
-                        <?= $form->field($model, 'description')->widget(CKEditor::className(),[
-                            'options' => [
-                                'rows' => 10
-                            ]
-                        ]) ?>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-8 col-lg-8">
-                            <?= $form->field($model, 'status')->dropDownList(Carrier::getStatusList(), [
-                                'class' => 'form-control',
-                                'prompt' => '- Вибір -',
-                            ]); ?>
+                            <?= $form->field($model, 'end_landing_plan')->widget(DateTimePicker::classname(), [
+                                'class' => 'form-control maxlength-handler',
+                                'options' => ['placeholder' => 'Введіть дату та час ...'],
+                                'pluginOptions' => [
+                                    'autoclose' => true
+                                ]
+                            ]) ?>
                         </div>
                     </div>
 

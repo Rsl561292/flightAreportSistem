@@ -4,17 +4,17 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Carrier */
+/* @var $model common\models\Flights */
 
 
 $this->title = 'Перегляд запису';
-$this->params['breadcrumbs'][] = ['label' => 'Авіаперевізники', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Польоти', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Авіаперевізники';
+$this->params['inscription_object_title'] = 'Польоти';
 $this->params['inscription_object_explanation'] = 'Перегляд запису';
 ?>
 
-<div class="plane-view">
+<div class="flights-view">
 
     <div class="row">
         <div class="col-xs-12">
@@ -40,32 +40,59 @@ $this->params['inscription_object_explanation'] = 'Перегляд запису
                         <?= DetailView::widget([
                             'model' => $model,
                             'attributes' => [
-                                'identification_code',
-                                'name',
+                                'id',
                                 [
-                                    'attribute' => 'country_id',
+                                    'attribute' => 'type',
                                     'value' => function($model) {
-                                        return !empty($model->country) ? Html::encode($model->country->name) : '';
+                                        return $model->getTypeName();
                                     },
                                 ],
                                 [
-                                    'attribute' => 'region_id',
+                                    'attribute' => 'direction',
                                     'value' => function($model) {
-                                        return !empty($model->region) ? Html::encode($model->region->name) : '';
+                                        return $model->getDirectionName();
                                     },
                                 ],
-                                'city',
-                                'other_address',
-                                'phone',
-                                'email',
                                 [
                                     'attribute' => 'status',
                                     'value' => function($model) {
                                         return $model->getStatusName();
                                     },
                                 ],
-                                'short_description',
-                                'description',
+                                [
+                                    'attribute' => 'visible',
+                                    'value' => function($model) {
+                                        return $model->getVisibleName();
+                                    },
+                                ],
+                                'datetime_plane',
+                                'datetime_fact',
+                                [
+                                    'attribute' => 'plane_id',
+                                    'value' => function($model) {
+                                        return !empty($model->plane) ? Html::encode($model->plane->registration_code) : '';
+                                    },
+                                ],
+                                [
+                                    'attribute' => 'strip_id',
+                                    'value' => function($model) {
+                                        return !empty($model->strip) ? Html::encode($model->strip->marking) : '';
+                                    },
+                                ],
+                                [
+                                    'attribute' => 'airport_id',
+                                    'value' => function($model) {
+                                        return !empty($model->airport) ? Html::encode($model->airport->name) : '';
+                                    },
+                                ],
+                                'begin_registration_plan',
+                                'end_registration_plan',
+                                'begin_registration_fact',
+                                'end_registration_fact',
+                                'begin_landing_plan',
+                                'end_landing_plan',
+                                'begin_landing_fact',
+                                'end_landing_fact',
                             ],
                         ]) ?>
                     </div>
