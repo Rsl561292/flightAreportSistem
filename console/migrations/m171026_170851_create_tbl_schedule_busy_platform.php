@@ -13,6 +13,7 @@ class m171026_170851_create_tbl_schedule_busy_platform extends Migration
 
         $this->createTable('{{%schedule_busy_platform}}', [
             'id' => $this->primaryKey(),
+            'platform_id' => $this->integer()->notNull()->unsigned(),
             'plane_id' => $this->integer()->notNull()->unsigned(),
             'flight_id' => $this->integer()->null()->unsigned(),
             'status' => $this->char(1)->notNull()->defaultValue('1'),
