@@ -113,6 +113,11 @@ class Plane extends \yii\db\ActiveRecord
         return $this->hasMany(Flights::className(), ['plane_id' => 'id']);
     }
 
+    public function getScheduleBusyPlatform()
+    {
+        return $this->hasMany(ScheduleBusyPlatform::className(), ['plane_id' => 'id']);
+    }
+
     //=================================================================================
     public static function getStatusLocationList()
     {

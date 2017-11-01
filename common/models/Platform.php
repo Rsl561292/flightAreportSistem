@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -93,6 +94,13 @@ class Platform extends \yii\db\ActiveRecord
         ];
     }
 
+    //===================================================================================
+    public function getScheduleBusyPlatform()
+    {
+        return $this->hasMany(ScheduleBusyPlatform::className(), ['platform_id' => 'id']);
+    }
+
+    //==========================================================================================
     public function getTerminals()
     {
         return $this->hasOne(Terminals::className(), ['id' => 'terminal_id']);
@@ -124,5 +132,30 @@ class Platform extends \yii\db\ActiveRecord
     public function getTypeConnectingName()
     {
         return ArrayHelper::getValue(self::getTypeConnectingList(), $this->type_connecting, 'Невизначений');
+    }
+
+    public static function getActiveRecordListId()
+    {
+        $list = (new Query())
+            ->select('symbol')
+            ->from(self::tableName())
+            ->where(['status' => self::STATUS_WORKING_AND_OPEN])
+            ->orderBy(['symbol' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
+
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('symbol')
+            ->from(self::tableName())
+            ->orderBy(['symbol' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
     }
 }

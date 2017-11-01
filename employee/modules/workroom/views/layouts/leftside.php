@@ -120,6 +120,12 @@ use yii\helpers\Url;
                                     'url' => ['flights/index'],
                                     'active' => $this->context->route == 'flights/index'
                                 ],
+                                [
+                                    'label' => 'Гріфіки займання перонів',
+                                    'icon' => 'fa fa-square-o',
+                                    'url' => ['schedule-busy-platform/index'],
+                                    'active' => $this->context->route == 'schedule-busy-platform/index'
+                                ],
                             ]
                         ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],

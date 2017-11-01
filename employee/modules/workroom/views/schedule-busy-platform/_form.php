@@ -5,30 +5,27 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
 use kartik\datetime\DateTimePicker;
-use common\models\Flights;
+use common\models\ScheduleBusyPlatform;
+use common\models\Platform;
 use common\models\Plane;
-use common\models\FlightStrips;
-use common\models\Airports;
+use common\models\Flights;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Flights */
+/* @var $model common\models\ScheduleBusyPlatform */
 /* @var $form yii\widgets\ActiveForm */
 
 $this->registerJs("
-	$('#" . Html::getInputId($model, 'plane_id') .
-        ", #" . Html::getInputId($model, 'strip_id') .
-        ", #" . Html::getInputId($model, 'airport_id') . "').select2();
-	$('#" . Html::getInputId($model, 'type') .
-        ", #" . Html::getInputId($model, 'direction') .
-        ", #" . Html::getInputId($model, 'status') .
-        ", #" . Html::getInputId($model, 'visible') . "').select2({minimumResultsForSearch: -1});
+	$('#" . Html::getInputId($model, 'platform_id') .
+        ", #" . Html::getInputId($model, 'plane_id') .
+        ", #" . Html::getInputId($model, 'flight_id') . "').select2();
+	$('#" . Html::getInputId($model, 'status') . "').select2({minimumResultsForSearch: -1});
 ", \yii\web\View::POS_READY);
 ?>
 
-<div class="flights-form">
+<div class="schedule-busy-platform-form">
     <?php
     Pjax::begin([
-        'id' => 'flights-grid',
+        'id' => 'schedule-busy-platform-grid',
         'timeout' => false,
         'enablePushState' => false,
         'clientOptions' => [
@@ -36,7 +33,7 @@ $this->registerJs("
         ],
     ]);
     $form = ActiveForm::begin([
-        'id' => 'flights-form',
+        'id' => 'schedule-busy-platform-form',
         'enableClientValidation' => false,
         'enableAjaxValidation' => false,
         'validateOnSubmit' => true,
@@ -75,58 +72,13 @@ $this->registerJs("
                     <?php endif;?>
 
                     <div class="row">
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'type')->dropDownList(Flights::getTypeList(), [
+                        <div class="col-sm-4 col-lg-4">
+                            <?= $form->field($model, 'platform_id')->dropDownList(Platform::getActiveRecordListId(), [
                                 'class' => 'form-control',
                                 'encode' => false,
                                 'prompt' => '- Вибір -'
                             ]); ?>
                         </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'direction')->dropDownList(Flights::getDirectionList(), [
-                                'class' => 'form-control',
-                                'encode' => false,
-                                'prompt' => '- Вибір -'
-                            ]); ?>
-                        </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'status')->dropDownList(Flights::getStatusList(), [
-                                'class' => 'form-control',
-                                'encode' => false,
-                                'prompt' => '- Вибір -'
-                            ]); ?>
-                        </div>
-                        <div class="col-sm-3 col-lg-3">
-                            <?= $form->field($model, 'visible')->dropDownList(Flights::getVisibleList(), [
-                                'class' => 'form-control',
-                                'encode' => false,
-                                'prompt' => '- Вибір -'
-                            ]); ?>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'datetime_plane')->widget(DateTimePicker::classname(), [
-                                'class' => 'form-control maxlength-handler',
-                                'options' => ['placeholder' => 'Введіть дату та час ...'],
-                                'pluginOptions' => [
-                                    'autoclose' => true
-                                ]
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'datetime_fact')->widget(DateTimePicker::classname(), [
-                                'class' => 'form-control maxlength-handler',
-                                'options' => ['placeholder' => 'Введіть дату та час ...'],
-                                'pluginOptions' => [
-                                    'autoclose' => true
-                                ]
-                            ]) ?>
-                        </div>
-                    </div>
-
-                    <div class="row">
                         <div class="col-sm-4 col-lg-4">
                             <?= $form->field($model, 'plane_id')->dropDownList(Plane::getActiveRecordListId(), [
                                 'class' => 'form-control',
@@ -135,14 +87,7 @@ $this->registerJs("
                             ]); ?>
                         </div>
                         <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'strip_id')->dropDownList(FlightStrips::getActiveRecordListId(), [
-                                'class' => 'form-control',
-                                'encode' => false,
-                                'prompt' => '- Вибір -'
-                            ]); ?>
-                        </div>
-                        <div class="col-sm-4 col-lg-4">
-                            <?= $form->field($model, 'airport_id')->dropDownList(Airports::getActiveRecordListId(), [
+                            <?= $form->field($model, 'flight_id')->dropDownList(Flights::getActiveRecordListIdCompiledData(), [
                                 'class' => 'form-control',
                                 'encode' => false,
                                 'prompt' => '- Вибір -'
@@ -152,7 +97,7 @@ $this->registerJs("
 
                     <div class="row">
                         <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'begin_registration_plan')->widget(DateTimePicker::classname(), [
+                            <?= $form->field($model, 'begin_busy_plan')->widget(DateTimePicker::classname(), [
                                 'class' => 'form-control maxlength-handler',
                                 'options' => ['placeholder' => 'Введіть дату та час ...'],
                                 'pluginOptions' => [
@@ -161,33 +106,57 @@ $this->registerJs("
                             ]) ?>
                         </div>
                         <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'end_registration_plan')->widget(DateTimePicker::classname(), [
+                            <?= $form->field($model, 'end_busy_plan')->widget(DateTimePicker::classname(), [
                                 'class' => 'form-control maxlength-handler',
                                 'options' => ['placeholder' => 'Введіть дату та час ...'],
                                 'pluginOptions' => [
                                     'autoclose' => true
+                                ]
+                            ]) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'begin_busy_fact')->widget(DateTimePicker::classname(), [
+                                'class' => 'form-control maxlength-handler',
+                                'options' => ['placeholder' => ''],
+                                'disabled' => true,
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                ]
+                            ]) ?>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <?= $form->field($model, 'end_busy_fact')->widget(DateTimePicker::classname(), [
+                                'class' => 'form-control maxlength-handler',
+                                'options' => ['placeholder' => ''],
+                                'disabled' => true,
+                                'pluginOptions' => [
+                                    'autoclose' => true,
                                 ]
                             ]) ?>
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'begin_landing_plan')->widget(DateTimePicker::classname(), [
-                                'class' => 'form-control maxlength-handler',
-                                'options' => ['placeholder' => 'Введіть дату та час ...'],
-                                'pluginOptions' => [
-                                    'autoclose' => true
-                                ]
-                            ]) ?>
-                        </div>
-                        <div class="col-sm-6 col-lg-6">
-                            <?= $form->field($model, 'end_landing_plan')->widget(DateTimePicker::classname(), [
-                                'class' => 'form-control maxlength-handler',
-                                'options' => ['placeholder' => 'Введіть дату та час ...'],
-                                'pluginOptions' => [
-                                    'autoclose' => true
-                                ]
-                            ]) ?>
+                        <div class="col-sm-7 col-lg-7">
+                            <?php
+                                $listStatus = ScheduleBusyPlatform::getStatusList();
+
+                                if ($model->isNewRecord) {
+                                    unset($listStatus[ScheduleBusyPlatform::STATUS_USED], $listStatus[ScheduleBusyPlatform::STATUS_COMPLETED]);
+                                } else {
+
+                                    if ($model->status == ScheduleBusyPlatform::STATUS_SCHEDULED) {
+                                        unset($listStatus[ScheduleBusyPlatform::STATUS_COMPLETED]);
+                                    }
+                                }
+                            ?>
+
+                            <?= $form->field($model, 'status')->dropDownList($listStatus, [
+                                'id' => 'schedulebusyplatform-status',
+                                'class' => 'form-control',
+                                'encode' => false,
+                            ]); ?>
                         </div>
                     </div>
 
@@ -208,3 +177,34 @@ $this->registerJs("
         <?php Pjax::end(); ?>
     </div>
 </div>
+
+<script type="text/javascript">
+    var fieldBeginBusyFact = $('#<?= Html::getInputId($model, 'begin_busy_fact') ?>');
+    var fieldEndBusyFact = $('#<?= Html::getInputId($model, "end_busy_fact") ?>');
+
+    $(document).on('change', '#schedulebusyplatform-status', function() {
+        var value = $(this).val();
+        var dateTime = new Date();
+
+        console.log('date='+value);
+
+        switch(value) {
+            case '<?= ScheduleBusyPlatform::STATUS_SCHEDULED ?>':
+                fieldBeginBusyFact.val('');
+                fieldEndBusyFact.val('');
+                break;
+            case '<?= ScheduleBusyPlatform::STATUS_USED ?>':
+                alert('Date='+dateTime);
+                fieldBeginBusyFact.val(dateTime);
+                fieldEndBusyFact.val('');
+                break;
+            case '<?= ScheduleBusyPlatform::STATUS_COMPLETED ?>':
+                fieldBeginBusyFact.val('');
+                fieldEndBusyFact.val('');
+                break;
+
+            default:
+        }
+    });
+
+</script>

@@ -3,20 +3,22 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
+use common\models\ScheduleBusyPlatform;
+use common\models\Platform;
+use common\models\Plane;
 use common\models\Flights;
-use common\models\Airports;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Польоти';
+$this->title = 'Графіки зайнятості перону';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Польоти';
-$this->params['inscription_object_explanation'] = 'Список польотів';
+$this->params['inscription_object_title'] = 'Графіки зайнятості перону';
+$this->params['inscription_object_explanation'] = 'Список графіків зайнятості перону';
 
 ?>
 
-<div class="flights-index">
+<div class="schedule-busy-platform-index">
 
     <div class="row">
         <div class="col-xs-12">
@@ -26,7 +28,7 @@ $this->params['inscription_object_explanation'] = 'Список польотів
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Додати інформацію про новий політ', ['create'], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Додати запис про зайнятість перону', ['create'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
 
@@ -34,7 +36,7 @@ $this->params['inscription_object_explanation'] = 'Список польотів
                     <div class="table-responsive table-products">
                         <?php
                         Pjax::begin([
-                            'id' => 'flights-grid',
+                            'id' => 'schedule-busy-platform-grid',
                             'timeout' => false,
                             'enablePushState' => false,
                             'clientOptions' => [
@@ -58,6 +60,7 @@ $this->params['inscription_object_explanation'] = 'Список польотів
                                 ],
                                 [
                                     'attribute' => 'id',
+                                    'headerOptions' => ['width' => '70'],
                                     'content' => function($model) {
                                         return $model->id;
                                     },
@@ -67,49 +70,75 @@ $this->params['inscription_object_explanation'] = 'Список польотів
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'datetime_plane',
+                                    'attribute' => 'platform_id',
+                                    'headerOptions' => ['width' => '80'],
                                     'content' => function($model) {
-                                        return $model->datetime_plane;
+                                        return !empty($model->platform) ? Html::encode($model->platform->symbol) : '';
+                                    },
+                                    'filter' => Html::activeDropDownList($searchModel, 'platform_id', Platform::getAllRecordListId(), [
+                                        'class' => 'form-control form-filter input-sm',
+                                        'prompt' => '- Всі перони -'
+                                    ]),
+                                ],
+                                [
+                                    'attribute' => 'begin_busy_plan',
+                                    'headerOptions' => ['width' => '150'],
+                                    'content' => function($model) {
+                                        return $model->begin_busy_plan;
                                     },
                                     'filter' => false,
                                 ],
                                 [
-                                    'attribute' => 'type',
+                                    'attribute' => 'end_busy_plan',
+                                    'headerOptions' => ['width' => '150'],
                                     'content' => function($model) {
-                                        return $model->getTypeName();
+                                        return $model->end_busy_plan;
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'type', Flights::getTypeList(), [
+                                    'filter' => false,
+                                ],
+                                [
+                                    'attribute' => 'plane_id',
+                                    'headerOptions' => ['width' => '120'],
+                                    'content' => function($model) {
+                                        return !empty($model->plane) ? Html::encode($model->plane->registration_code) : '';
+                                    },
+                                    'filter' => Html::activeDropDownList($searchModel, 'plane_id', Plane::getAllRecordListId(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Всі типи перевезень -'
+                                        'prompt' => '- Всі ПС -'
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'direction',
+                                    'attribute' => 'flight_id',
+                                    'headerOptions' => ['width' => '250'],
                                     'content' => function($model) {
-                                        return $model->getDirectionName();
+                                        return !empty($model->flight) ? $model->flight->id.' -- '.', '.date('Y-m-d H:i', strtotime($model->flight->datetime_plane)) : '';
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'direction', Flights::getDirectionList(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'flight_id', Flights::getAllRecordListId(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Всі види напрямів -'
-                                    ]),
-                                ],
-                                [
-                                    'attribute' => 'airport_id',
-                                    'content' => function($model) {
-                                        return !empty($model->airport) ? Html::encode($model->airport->name) : '';
-                                    },
-                                    'filter' => Html::activeDropDownList($searchModel, 'airport_id', Airports::getActiveRecordListId(), [
-                                        'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Всі аеропорти -'
+                                        'prompt' => '- Всі польоти -'
                                     ]),
                                 ],
                                 [
                                     'attribute' => 'status',
+                                    'headerOptions' => ['width' => '100'],
                                     'content' => function($model) {
+                                        $class = 'label-primary';
 
-                                        return $model->getStatusName();
+                                        switch ($model->status) {
+                                            case ScheduleBusyPlatform::STATUS_SCHEDULED:
+                                                $class = 'label-warning';
+                                                break;
+                                            case ScheduleBusyPlatform::STATUS_USED:
+                                                $class = 'label-warning';
+                                                break;
+                                            case ScheduleBusyPlatform::STATUS_COMPLETED:
+                                                $class = 'label-success';
+                                                break;
+                                        }
+
+                                        return Html::tag('span', $model->getStatusName(), ['class' => 'label label-sm ' . $class]);
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'status', Flights::getStatusList(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'status', ScheduleBusyPlatform::getStatusList(), [
                                         'class' => 'form-control form-filter input-sm',
                                         'prompt' => '- Статус -'
                                     ]),

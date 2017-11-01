@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Flights */
+/* @var $model common\models\ScheduleBusyPlatform */
 
 $this->title = 'Додати новий політ';
 $this->params['breadcrumbs'][] = ['label' => 'Польоти', 'url' => ['index']];

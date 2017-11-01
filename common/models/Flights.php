@@ -389,6 +389,11 @@ class Flights extends \yii\db\ActiveRecord
         return $this->hasOne(Airports::className(), ['id' => 'airport_id']);
     }
 
+    public function getScheduleBusyPlatform()
+    {
+        return $this->hasMany(ScheduleBusyPlatform::className(), ['flight_id' => 'id']);
+    }
+
     //=====================================================================================
     public static function getTypeList()
     {
@@ -406,8 +411,8 @@ class Flights extends \yii\db\ActiveRecord
     public static function getDirectionList()
     {
         return [
-            self::DIRECTION_FROM => 'З аеропорту',
-            self::DIRECTION_IN => 'В аеропорт',
+            self::DIRECTION_FROM => 'Виліт',
+            self::DIRECTION_IN => 'Посадка',
         ];
     }
 
@@ -442,4 +447,33 @@ class Flights extends \yii\db\ActiveRecord
         return ArrayHelper::getValue(self::getVisibleList(), $this->visible, 'Невизначено');
     }
 
+    public static function getActiveRecordListIdCompiledData()
+    {
+        $list = (new Query())
+            ->select(['id', 'direction', 'status', 'datetime_fact'])
+            ->from(self::tableName())
+            ->where(['status' => self::STATUS_EXPECTED])
+            ->orderBy(['id' => SORT_ASC])
+            ->indexBy('id')
+            ->all();
+        $listValue = [];
+
+        foreach ($list as $key => $value) {
+            $listValue[$key] = $value['id'].', '.ArrayHelper::getValue(self::getDirectionList(), $value['direction'], 'Невизначено').', '
+                .ArrayHelper::getValue(self::getStatusList(), $value['status'], 'Невизначено').' в '.date('Y-m-d H:i', strtotime($value['datetime_fact']));
+        }
+        return $listValue;
+    }
+
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('datetime_plane')
+            ->from(self::tableName())
+            ->orderBy(['id' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
 }

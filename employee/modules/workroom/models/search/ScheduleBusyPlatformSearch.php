@@ -48,9 +48,11 @@ class ScheduleBusyPlatformSearch extends ScheduleBusyPlatform
      */
     public function search($params)
     {
-        $query = Flights::find()
+        $query = ScheduleBusyPlatform::find()
             ->with([
-                'airport'
+                'platform',
+                'plane',
+                'flight'
             ]);
 
         // add conditions that should always apply here
@@ -59,7 +61,7 @@ class ScheduleBusyPlatformSearch extends ScheduleBusyPlatform
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
-                    'begin_registration_plan' => SORT_ASC,
+                    'begin_busy_plan' => SORT_ASC,
                 ],
             ],
         ]);
@@ -75,23 +77,14 @@ class ScheduleBusyPlatformSearch extends ScheduleBusyPlatform
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'type' => $this->type,
-            'direction' => $this->direction,
-            'datetime_plane' => $this->datetime_plane,
-            'datetime_fact' => $this->datetime_fact,
+            'platform_id' => $this->platform_id,
             'plane_id' => $this->plane_id,
-            'strip_id' => $this->strip_id,
+            'flight_id' => $this->flight_id,
             'status' => $this->status,
-            'visible' => $this->visible,
-            'airport_id' => $this->airport_id,
-            'begin_registration_plan' => $this->begin_registration_plan,
-            'end_registration_plan' => $this->end_registration_plan,
-            'begin_registration_fact' => $this->begin_registration_fact,
-            'end_registration_fact' => $this->end_registration_fact,
-            'begin_landing_plan' => $this->begin_landing_plan,
-            'end_landing_plan' => $this->end_landing_plan,
-            'begin_landing_fact' => $this->begin_landing_fact,
-            'end_landing_fact' => $this->end_landing_fact,
+            'begin_busy_plan' => $this->begin_busy_plan,
+            'end_busy_plan' => $this->end_busy_plan,
+            'begin_busy_fact' => $this->begin_busy_fact,
+            'end_busy_fact' => $this->end_busy_fact,
         ]);
 
         return $dataProvider;
