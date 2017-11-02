@@ -1,15 +1,15 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Flights */
+/* @var $model common\models\ScheduleBusyPlatform */
 
-$this->title = 'Редагування інформації';
-$this->params['breadcrumbs'][] = ['label' => 'Польоти', 'url' => ['index']];
+$this->title = 'Редагування';
+$this->params['breadcrumbs'][] = ['label' => 'Графіки зайнятості перону', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Польоти';
-$this->params['inscription_object_explanation'] = 'Редагування інформації';
+$this->params['inscription_object_title'] = 'Графіки зайнятості перону';
+$this->params['inscription_object_explanation'] = 'Редагування';
 ?>
-<div class="flights-update">
+<div class="schedule-busy-platform-update">
 
     <?= $this->render('_form', [
         'model' => $model,

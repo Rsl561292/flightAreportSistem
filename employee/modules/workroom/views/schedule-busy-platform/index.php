@@ -14,7 +14,7 @@ use common\models\Flights;
 $this->title = 'Графіки зайнятості перону';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['inscription_object_title'] = 'Графіки зайнятості перону';
-$this->params['inscription_object_explanation'] = 'Список графіків зайнятості перону';
+$this->params['inscription_object_explanation'] = 'Список графіків';
 
 ?>
 
@@ -28,7 +28,7 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Додати запис про зайнятість перону', ['create'], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Додати запис графіку', ['create'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
 
@@ -111,7 +111,7 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                                     'attribute' => 'flight_id',
                                     'headerOptions' => ['width' => '250'],
                                     'content' => function($model) {
-                                        return !empty($model->flight) ? $model->flight->id.' -- '.', '.date('Y-m-d H:i', strtotime($model->flight->datetime_plane)) : '';
+                                        return !empty($model->flight) ? $model->flight->id.' : '.$model->flight->getDirectionName().', '.$model->flight->getStatusName().' в '.date('Y-m-d H:i', strtotime($model->flight->datetime_fact)) : '';
                                     },
                                     'filter' => Html::activeDropDownList($searchModel, 'flight_id', Flights::getAllRecordListId(), [
                                         'class' => 'form-control form-filter input-sm',
@@ -122,17 +122,20 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                                     'attribute' => 'status',
                                     'headerOptions' => ['width' => '100'],
                                     'content' => function($model) {
-                                        $class = 'label-primary';
+                                        $class = 'label-default';
 
                                         switch ($model->status) {
                                             case ScheduleBusyPlatform::STATUS_SCHEDULED:
                                                 $class = 'label-warning';
                                                 break;
                                             case ScheduleBusyPlatform::STATUS_USED:
-                                                $class = 'label-warning';
+                                                $class = 'label-primary';
                                                 break;
                                             case ScheduleBusyPlatform::STATUS_COMPLETED:
                                                 $class = 'label-success';
+                                                break;
+                                            case ScheduleBusyPlatform::STATUS_CANCELED:
+                                                $class = 'label-danger';
                                                 break;
                                         }
 

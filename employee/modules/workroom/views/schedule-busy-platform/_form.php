@@ -24,14 +24,6 @@ $this->registerJs("
 
 <div class="schedule-busy-platform-form">
     <?php
-    Pjax::begin([
-        'id' => 'schedule-busy-platform-grid',
-        'timeout' => false,
-        'enablePushState' => false,
-        'clientOptions' => [
-            'method' => 'get',
-        ],
-    ]);
     $form = ActiveForm::begin([
         'id' => 'schedule-busy-platform-form',
         'enableClientValidation' => false,
@@ -75,6 +67,7 @@ $this->registerJs("
                         <div class="col-sm-4 col-lg-4">
                             <?= $form->field($model, 'platform_id')->dropDownList(Platform::getActiveRecordListId(), [
                                 'class' => 'form-control',
+                                'disabled' => $model->isNewRecord ? false : true,
                                 'encode' => false,
                                 'prompt' => '- Вибір -'
                             ]); ?>
@@ -143,17 +136,28 @@ $this->registerJs("
                                 $listStatus = ScheduleBusyPlatform::getStatusList();
 
                                 if ($model->isNewRecord) {
-                                    unset($listStatus[ScheduleBusyPlatform::STATUS_USED], $listStatus[ScheduleBusyPlatform::STATUS_COMPLETED]);
+                                    unset($listStatus[ScheduleBusyPlatform::STATUS_COMPLETED], $listStatus[ScheduleBusyPlatform::STATUS_CANCELED]);
                                 } else {
 
                                     if ($model->status == ScheduleBusyPlatform::STATUS_SCHEDULED) {
                                         unset($listStatus[ScheduleBusyPlatform::STATUS_COMPLETED]);
                                     }
+
+                                    if ($model->status == ScheduleBusyPlatform::STATUS_USED) {
+                                        unset($listStatus[ScheduleBusyPlatform::STATUS_CANCELED]);
+                                    }
+
+                                    if ($model->status == ScheduleBusyPlatform::STATUS_COMPLETED) {
+                                        unset($listStatus[ScheduleBusyPlatform::STATUS_SCHEDULED], $listStatus[ScheduleBusyPlatform::STATUS_CANCELED]);
+                                    }
+
+                                    if ($model->status == ScheduleBusyPlatform::STATUS_CANCELED) {
+                                        unset($listStatus[ScheduleBusyPlatform::STATUS_USED], $listStatus[ScheduleBusyPlatform::STATUS_COMPLETED]);
+                                    }
                                 }
                             ?>
 
                             <?= $form->field($model, 'status')->dropDownList($listStatus, [
-                                'id' => 'schedulebusyplatform-status',
                                 'class' => 'form-control',
                                 'encode' => false,
                             ]); ?>
@@ -174,37 +178,6 @@ $this->registerJs("
             <!-- /.col -->
         </div>
         <?php ActiveForm::end(); ?>
-        <?php Pjax::end(); ?>
     </div>
 </div>
 
-<script type="text/javascript">
-    var fieldBeginBusyFact = $('#<?= Html::getInputId($model, 'begin_busy_fact') ?>');
-    var fieldEndBusyFact = $('#<?= Html::getInputId($model, "end_busy_fact") ?>');
-
-    $(document).on('change', '#schedulebusyplatform-status', function() {
-        var value = $(this).val();
-        var dateTime = new Date();
-
-        console.log('date='+value);
-
-        switch(value) {
-            case '<?= ScheduleBusyPlatform::STATUS_SCHEDULED ?>':
-                fieldBeginBusyFact.val('');
-                fieldEndBusyFact.val('');
-                break;
-            case '<?= ScheduleBusyPlatform::STATUS_USED ?>':
-                alert('Date='+dateTime);
-                fieldBeginBusyFact.val(dateTime);
-                fieldEndBusyFact.val('');
-                break;
-            case '<?= ScheduleBusyPlatform::STATUS_COMPLETED ?>':
-                fieldBeginBusyFact.val('');
-                fieldEndBusyFact.val('');
-                break;
-
-            default:
-        }
-    });
-
-</script>

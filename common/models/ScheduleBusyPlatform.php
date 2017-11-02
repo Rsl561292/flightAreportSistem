@@ -24,6 +24,7 @@ class ScheduleBusyPlatform extends \yii\db\ActiveRecord
     const STATUS_SCHEDULED = '1';
     const STATUS_USED = '2';
     const STATUS_COMPLETED = '3';
+    const STATUS_CANCELED = '4';
 
     /**
      * @inheritdoc
@@ -46,9 +47,9 @@ class ScheduleBusyPlatform extends \yii\db\ActiveRecord
             ['flight_id', 'validateFlight'],
             [['begin_busy_plan', 'end_busy_plan', 'begin_busy_fact', 'end_busy_fact'], 'safe'],
             ['begin_busy_plan', 'validateBeginBusyPlan'],
-            ['begin_busy_fact', 'validateBeginBusyFact'],
             [['status'], 'string', 'max' => 1],
             ['status', 'in', 'range' => array_keys(self::getStatusList())],
+            ['status', 'validateStatus'],
         ];
     }
 
@@ -66,41 +67,93 @@ class ScheduleBusyPlatform extends \yii\db\ActiveRecord
 
                     return true;
                 }
-            }
 
-        }
+                if ($this->status == self::STATUS_SCHEDULED || ($this->isNewRecord && $this->status == self::STATUS_USED)) {
+                    //перевірка чи плановий інтервал не перекривається іншими плановими
+                    $query = self::find()
+                        ->with([
+                            'plane',
+                        ])
+                        ->where(['platform_id' => $this->platform_id])
+                        ->andWhere(['or',
+                            ['and',
+                                ['<=', 'begin_busy_plan', $this->begin_busy_plan],
+                                ['>=', 'end_busy_plan', $this->begin_busy_plan]
+                            ],
+                            ['and',
+                                ['<=', 'begin_busy_plan', $this->end_busy_plan],
+                                ['>=', 'end_busy_plan', $this->end_busy_plan]
+                            ],
+                            ['and',
+                                ['>=', 'begin_busy_plan', $this->begin_busy_plan],
+                                ['<=', 'end_busy_plan', $this->end_busy_plan]
+                            ]
+                        ])
+                        ->andWhere(['status' => self::STATUS_SCHEDULED]);
 
-        return true;
-    }
+                    if (!$this->isNewRecord) {
+                        $query->andWhere(['not', ['id' => $this->id]]);
+                    }
 
-    public function validateBeginBusyFact($attribute)
-    {
-        if (!$this->hasErrors('begin_busy_fact')) {
+                    $listRecord = $query->all();
 
-            $labelList = $this->attributeLabels();
+                    if (count($listRecord) > 0) {
+                        $text = 'Вказаний вами інтервал зайнятості даного перону по плану уже перекриває наступними запланованими інтервалами зайнятості даного перону:  ';
+                        $index = 1;
 
-            if (!$this->hasErrors('end_busy_fact')) {
+                        foreach ($listRecord as $record) {
+                            $text .= $index.') з '.date('Y-m-d H:i', strtotime($record->begin_busy_plan)).' по '.date('Y-m-d H:i', strtotime($record->end_busy_plan)).' для ПС з бортовим кодом \''.$record->plane->registration_code.'\', код запису якого '.$record->id.'|  ';
+                            $index++;
+                        }
 
-                if ((strlen($this->begin_busy_fact) === 0) && (strlen($this->end_busy_fact) !== 0)) {
+                        $this->addError($attribute, $text);
 
-                    $this->addError($attribute, 'Якщо задано значення поля '.$labelList['end_busy_fact'].', то має бути задано і значення поля '.$labelList['begin_busy_fact'].'.');
+                        return true;
+                    }
 
-                    return true;
+                    //перевірка чи плановий інтервал не перекривається іншими фактичними
+                    $query = self::find()
+                        ->with([
+                            'plane',
+                        ])
+                        ->where(['platform_id' => $this->platform_id])
+                        ->andWhere(['or',
+                            ['and',
+                                ['<=', 'begin_busy_fact', $this->begin_busy_plan],
+                                ['>=', 'end_busy_fact', $this->begin_busy_plan]
+                            ],
+                            ['and',
+                                ['<=', 'begin_busy_fact', $this->end_busy_plan],
+                                ['>=', 'end_busy_fact', $this->end_busy_plan]
+                            ],
+                            ['and',
+                                ['>=', 'begin_busy_fact', $this->begin_busy_plan],
+                                ['<=', 'end_busy_fact', $this->end_busy_plan]
+                            ]
+                        ])
+                        ->andWhere(['status' => self::STATUS_COMPLETED]);
+
+                    if (!$this->isNewRecord) {
+                        $query->andWhere(['not', ['id' => $this->id]]);
+                    }
+
+                    $listRecord = $query->all();
+
+                    if (count($listRecord) > 0) {
+                        $text = 'Вказаний вами інтервал зайнятості даного перону по плану уже перекриває наступними інтервалами фактичної зайнятості даного перону:  ';
+                        $index = 1;
+
+                        foreach ($listRecord as $record) {
+                            $text .= $index.') з '.date('Y-m-d H:i', strtotime($record->begin_busy_fact)).' по '.date('Y-m-d H:i', strtotime($record->end_busy_fact)).' для ПС з бортовим кодом \''.$record->plane->registration_code.'\''.', код запису якого '.$record->id.'|  ';
+                            $index++;
+                        }
+
+                        $this->addError($attribute, $text);
+
+                        return true;
+                    }
                 }
 
-                if ((strlen($this->end_busy_fact) !== 0) && (strtotime($this->begin_busy_fact) >= strtotime($this->end_busy_fact))) {
-
-                    $this->addError($attribute, 'Якщо задано значення поля '.$labelList['end_busy_fact'].', то значення поля '.$labelList['begin_busy_fact'].' має бути задано та бути менше значення поля '.$labelList['end_busy_fact'].'.');
-
-                    return true;
-                }
-
-                if ((strlen($this->end_busy_fact) === 0) && (strlen($this->begin_busy_fact) !== 0)) {
-
-                    $this->addError($attribute, 'Якщо задано значення поля '.$labelList['begin_busy_fact'].', то значення поля '.$labelList['end_busy_fact'].' має бути задано та бути більше значення поля '.$labelList['begin_busy_fact'].'.');
-
-                    return true;
-                }
             }
 
         }
@@ -171,6 +224,33 @@ class ScheduleBusyPlatform extends \yii\db\ActiveRecord
         return true;
     }
 
+    public function validateStatus($attribute)
+    {
+        if (!$this->hasErrors('status')) {
+
+            if ($this->status === self::STATUS_USED) {
+
+                $query = self::find()
+                    ->where(['platform_id' => $this->platform_id])
+                    ->andWhere(['status' => self::STATUS_USED]);
+
+                if (!$this->isNewRecord) {
+                    $query->andWhere(['not', ['id' => $this->id]]);
+                }
+
+                $model = $query->one();
+
+                if (!empty($model)) {
+
+                    $this->addError($attribute, 'Ви не можете перевести даний запис про час займання для вибраного перону у статус \''.$this->getStatusName().'\', оскільки зараз є інший запис для даного перону, який вже перебуває у статусі \''.$this->getStatusName().'\'. Код цього запису - '.$model->id);
+
+                    return true;
+                }
+            }
+        }
+
+        return true;
+    }
     /**
      * @inheritdoc
      */
@@ -199,6 +279,36 @@ class ScheduleBusyPlatform extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+
+            switch ($this->status) {
+                case self::STATUS_SCHEDULED:
+                    $this->begin_busy_fact = null;
+                    $this->end_busy_fact = null;
+
+                    break;
+
+                case self::STATUS_USED:
+                    $this->begin_busy_fact = date('Y-m-d H:i:s');
+                    $this->end_busy_fact = null;
+
+                    break;
+
+                case self::STATUS_COMPLETED:
+                    if ($this->begin_busy_fact == null) {
+
+                        $this->begin_busy_fact = date('Y-m-d H:i:s');
+                    }
+
+                    $this->end_busy_fact = date('Y-m-d H:i:s');
+
+                    break;
+
+                case self::STATUS_CANCELED:
+                    $this->begin_busy_fact = null;
+                    $this->end_busy_fact = null;
+
+                    break;
+            }
 
             return true;
         }
@@ -229,6 +339,7 @@ class ScheduleBusyPlatform extends \yii\db\ActiveRecord
             self::STATUS_SCHEDULED => 'Заплановано',
             self::STATUS_USED => 'Використовується',
             self::STATUS_COMPLETED => 'Завершено',
+            self::STATUS_CANCELED => 'Відмінено'
         ];
     }
 
