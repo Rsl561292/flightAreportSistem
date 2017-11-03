@@ -394,6 +394,11 @@ class Flights extends \yii\db\ActiveRecord
         return $this->hasMany(ScheduleBusyPlatform::className(), ['flight_id' => 'id']);
     }
 
+    public function getRegistrationDeskToFlight()
+    {
+        return $this->hasMany(RegistrationDeskToFlight::className(), ['flight_id' => 'id']);
+    }
+
     //=====================================================================================
     public static function getTypeList()
     {
@@ -465,15 +470,61 @@ class Flights extends \yii\db\ActiveRecord
         return $listValue;
     }
 
-    public static function getAllRecordListId()
+    public static function getAllRecordListIdCompiledData()
     {
         $list = (new Query())
-            ->select('datetime_plane')
+            ->select(['id', 'direction', 'status', 'datetime_fact'])
             ->from(self::tableName())
             ->orderBy(['id' => SORT_ASC])
             ->indexBy('id')
-            ->column();
+            ->all();
+        $listValue = [];
 
-        return $list;
+        foreach ($list as $key => $value) {
+            $listValue[$key] = $value['id'].', '.ArrayHelper::getValue(self::getDirectionList(), $value['direction'], 'Невизначено').', '
+                .ArrayHelper::getValue(self::getStatusList(), $value['status'], 'Невизначено').' в '.date('Y-m-d H:i', strtotime($value['datetime_fact']));
+        }
+        return $listValue;
+    }
+
+    public static function getActiveRecordListIdRegistrationDesk()
+    {
+        $list = (new Query())
+            ->select(['id', 'direction', 'status', 'datetime_fact'])
+            ->from(self::tableName())
+            ->where(['status' => self::STATUS_EXPECTED])
+            ->andWhere(['not', ['begin_registration_plan' => null]])
+            ->andWhere(['direction' => self::DIRECTION_FROM])
+            ->orderBy(['id' => SORT_ASC])
+            ->indexBy('id')
+            ->all();
+        $listValue = [];
+
+        foreach ($list as $key => $value) {
+            $listValue[$key] = $value['id'].', '.ArrayHelper::getValue(self::getDirectionList(), $value['direction'], 'Невизначено').', '
+                .ArrayHelper::getValue(self::getStatusList(), $value['status'], 'Невизначено').' в '.date('Y-m-d H:i', strtotime($value['datetime_fact']));
+        }
+
+        return $listValue;
+    }
+
+    public static function getAllRecordListIdRegistrationDesk()
+    {
+        $list = (new Query())
+            ->select(['id', 'direction', 'status', 'datetime_fact'])
+            ->from(self::tableName())
+            ->where(['not', ['begin_registration_plan' => null]])
+            ->andWhere(['direction' => self::DIRECTION_FROM])
+            ->orderBy(['id' => SORT_ASC])
+            ->indexBy('id')
+            ->all();
+        $listValue = [];
+
+        foreach ($list as $key => $value) {
+            $listValue[$key] = $value['id'].', '.ArrayHelper::getValue(self::getDirectionList(), $value['direction'], 'Невизначено').', '
+                .ArrayHelper::getValue(self::getStatusList(), $value['status'], 'Невизначено').' в '.date('Y-m-d H:i', strtotime($value['datetime_fact']));
+        }
+
+        return $listValue;
     }
 }

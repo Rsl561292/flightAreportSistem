@@ -3,22 +3,21 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
-use common\models\ScheduleBusyPlatform;
+use common\models\RegistrationDeskToFlight;
 use common\models\Platform;
-use common\models\Plane;
 use common\models\Flights;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Графіки зайнятості перону';
+$this->title = 'Реєстр. стійки в польотах';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['inscription_object_title'] = 'Графіки зайнятості перону';
-$this->params['inscription_object_explanation'] = 'Список графіків';
+$this->params['inscription_object_title'] = 'Реєстр. стійки в польотах';
+$this->params['inscription_object_explanation'] = 'Список записів';
 
 ?>
 
-<div class="schedule-busy-platform-index">
+<div class="registration-desk-to-flight-index">
 
     <div class="row">
         <div class="col-xs-12">
@@ -28,7 +27,7 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                         <i class="fa fa-list-alt"></i> <?= $this->params['inscription_object_explanation']?>
                     </div>
                     <div class="actions btn-set">
-                        <?= Html::a('Додати запис графіку', ['create'], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Додати запис', ['create'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
 
@@ -36,7 +35,7 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                     <div class="table-responsive table-products">
                         <?php
                         Pjax::begin([
-                            'id' => 'schedule-busy-platform-grid',
+                            'id' => 'registration-desk-to-flight-grid',
                             'timeout' => false,
                             'enablePushState' => false,
                             'clientOptions' => [
@@ -54,9 +53,17 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                             'columns' => [
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{delete} {update} {view}',
+                                    'template' => '{delete} {update}',
                                     'header' => Html::a('<i class="fa fa-refresh"></i> Оновити', ['index'], ['class' => 'btn red']),
                                     'contentOptions' => ['class' => 'action-column'],
+                                    'visibleButtons' => [
+                                        'delete' => function($model) {
+                                            return $model->flight->status === Flights::STATUS_HAPPENED ? false : true;
+                                        },
+                                        'update' => function($model) {
+                                            return $model->flight->status === Flights::STATUS_HAPPENED ? false : true;
+                                        }
+                                    ],
                                 ],
                                 [
                                     'attribute' => 'id',
@@ -70,80 +77,49 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'platform_id',
-                                    'headerOptions' => ['width' => '80'],
+                                    'attribute' => 'registration_desk_id',
+                                    'headerOptions' => ['width' => '110'],
                                     'content' => function($model) {
-                                        return !empty($model->platform) ? Html::encode($model->platform->symbol) : '';
+                                        return !empty($model->registrationDesk) ? Html::encode($model->registrationDesk->symbol) : '';
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'platform_id', Platform::getAllRecordListId(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'registration_desk_id', Platform::getAllRecordListId(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Всі перони -'
-                                    ]),
-                                ],
-                                [
-                                    'attribute' => 'begin_busy_plan',
-                                    'headerOptions' => ['width' => '150'],
-                                    'content' => function($model) {
-                                        return $model->begin_busy_plan;
-                                    },
-                                    'filter' => false,
-                                ],
-                                [
-                                    'attribute' => 'end_busy_plan',
-                                    'headerOptions' => ['width' => '150'],
-                                    'content' => function($model) {
-                                        return $model->end_busy_plan;
-                                    },
-                                    'filter' => false,
-                                ],
-                                [
-                                    'attribute' => 'plane_id',
-                                    'headerOptions' => ['width' => '120'],
-                                    'content' => function($model) {
-                                        return !empty($model->plane) ? Html::encode($model->plane->registration_code) : '';
-                                    },
-                                    'filter' => Html::activeDropDownList($searchModel, 'plane_id', Plane::getAllRecordListId(), [
-                                        'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Всі ПС -'
+                                        'prompt' => '- Всі стійки -'
                                     ]),
                                 ],
                                 [
                                     'attribute' => 'flight_id',
-                                    'headerOptions' => ['width' => '250'],
                                     'content' => function($model) {
                                         return !empty($model->flight) ? $model->flight->id.' : '.$model->flight->getDirectionName().', '.$model->flight->getStatusName().' в '.date('Y-m-d H:i', strtotime($model->flight->datetime_fact)) : '';
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'flight_id', Flights::getAllRecordListId(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'flight_id', Flights::getAllRecordListIdRegistrationDesk(), [
                                         'class' => 'form-control form-filter input-sm',
                                         'prompt' => '- Всі польоти -'
                                     ]),
                                 ],
                                 [
-                                    'attribute' => 'status',
-                                    'headerOptions' => ['width' => '100'],
+                                    'attribute' => 'class',
+                                    'headerOptions' => ['width' => '90'],
                                     'content' => function($model) {
                                         $class = 'label-default';
 
-                                        switch ($model->status) {
-                                            case ScheduleBusyPlatform::STATUS_SCHEDULED:
-                                                $class = 'label-warning';
-                                                break;
-                                            case ScheduleBusyPlatform::STATUS_USED:
-                                                $class = 'label-primary';
-                                                break;
-                                            case ScheduleBusyPlatform::STATUS_COMPLETED:
+                                        switch ($model->class) {
+                                            case RegistrationDeskToFlight::CLASS_BUSINESS:
                                                 $class = 'label-success';
                                                 break;
-                                            case ScheduleBusyPlatform::STATUS_CANCELED:
+                                            case RegistrationDeskToFlight::CLASS_ECONOMIZE:
                                                 $class = 'label-danger';
+                                                break;
+                                            case RegistrationDeskToFlight::CLASS_ECONOMIZE_AND_BUSINESS:
+                                                $class = 'label-primary';
                                                 break;
                                         }
 
-                                        return Html::tag('span', $model->getStatusName(), ['class' => 'label label-sm ' . $class]);
+                                        return Html::tag('span', $model->getClassName(), ['class' => 'label label-sm ' . $class]);
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'status', ScheduleBusyPlatform::getStatusList(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'class', RegistrationDeskToFlight::getClassList(), [
                                         'class' => 'form-control form-filter input-sm',
-                                        'prompt' => '- Статус -'
+                                        'prompt' => '- Клас -'
                                     ]),
                                 ],
                             ],

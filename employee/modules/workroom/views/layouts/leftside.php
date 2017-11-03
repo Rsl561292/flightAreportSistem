@@ -126,6 +126,12 @@ use yii\helpers\Url;
                                     'url' => ['schedule-busy-platform/index'],
                                     'active' => $this->context->route == 'schedule-busy-platform/index'
                                 ],
+                                [
+                                    'label' => 'Використання реєст. стійок',
+                                    'icon' => 'fa fa-terminal',
+                                    'url' => ['registration-desk-to-flight/index'],
+                                    'active' => $this->context->route == 'registration-desk-to-flight/index'
+                                ],
                             ]
                         ],
                         ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],

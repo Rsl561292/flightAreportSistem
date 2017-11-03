@@ -47,8 +47,11 @@ class RegistrationDeskToFlightSearch extends RegistrationDeskToFlight
      */
     public function search($params)
     {
-        $query = RegistrationDesk::find()
-            ->with('terminals');
+        $query = RegistrationDeskToFlight::find()
+            ->with([
+                'flight',
+                'registrationDesk',
+            ]);
 
         // add conditions that should always apply here
 
@@ -56,7 +59,7 @@ class RegistrationDeskToFlightSearch extends RegistrationDeskToFlight
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
-                    'symbol' => SORT_ASC,
+                    'flight_id' => SORT_ASC,
                 ],
             ],
         ]);
@@ -72,12 +75,10 @@ class RegistrationDeskToFlightSearch extends RegistrationDeskToFlight
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'status' => $this->status,
-            'terminal_id' => $this->terminal_id,
+            'flight_id' => $this->flight_id,
+            'registration_desk_id' => $this->registration_desk_id,
+            'class' => $this->class,
         ]);
-
-        $query->andFilterWhere(['like', 'symbol', $this->symbol])
-            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

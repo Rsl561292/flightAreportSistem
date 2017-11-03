@@ -113,7 +113,7 @@ $this->params['inscription_object_explanation'] = 'Список графіків
                                     'content' => function($model) {
                                         return !empty($model->flight) ? $model->flight->id.' : '.$model->flight->getDirectionName().', '.$model->flight->getStatusName().' в '.date('Y-m-d H:i', strtotime($model->flight->datetime_fact)) : '';
                                     },
-                                    'filter' => Html::activeDropDownList($searchModel, 'flight_id', Flights::getAllRecordListId(), [
+                                    'filter' => Html::activeDropDownList($searchModel, 'flight_id', Flights::getAllRecordListIdCompiledData(), [
                                         'class' => 'form-control form-filter input-sm',
                                         'prompt' => '- Всі польоти -'
                                     ]),

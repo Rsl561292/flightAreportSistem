@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -61,11 +62,6 @@ class RegistrationDesk extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getTerminals()
-    {
-        return $this->hasOne(Terminals::className(), ['id' => 'terminal_id']);
-    }
-
     /**
      * @inheritdoc
      */
@@ -80,6 +76,18 @@ class RegistrationDesk extends \yii\db\ActiveRecord
         ];
     }
 
+    //==========================================================================================
+    public function getTerminals()
+    {
+        return $this->hasOne(Terminals::className(), ['id' => 'terminal_id']);
+    }
+
+    public function getRegistrationDeskToFlight()
+    {
+        return $this->hasMany(RegistrationDeskToFlight::className(), ['registration_desk_id' => 'id']);
+    }
+
+    //=======================================================================================
     public static function getStatusList()
     {
         return [
@@ -92,5 +100,30 @@ class RegistrationDesk extends \yii\db\ActiveRecord
     public function getStatusName()
     {
         return ArrayHelper::getValue(self::getStatusList(), $this->status, 'Невизначено');
+    }
+
+    public static function getActiveRecordListId()
+    {
+        $list = (new Query())
+            ->select('symbol')
+            ->from(self::tableName())
+            ->where(['status' => self::STATUS_WORKING_AND_OPEN])
+            ->orderBy(['symbol' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
+    }
+
+    public static function getAllRecordListId()
+    {
+        $list = (new Query())
+            ->select('symbol')
+            ->from(self::tableName())
+            ->orderBy(['symbol' => SORT_ASC])
+            ->indexBy('id')
+            ->column();
+
+        return $list;
     }
 }

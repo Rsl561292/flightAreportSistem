@@ -3,11 +3,12 @@
 namespace employee\modules\workroom\controllers;
 
 use Yii;
-use common\models\RegistrationDeskToFlight;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use common\models\RegistrationDeskToFlight;
+use employee\modules\workroom\models\search\RegistrationDeskToFlightSearch;
 
 /**
  * RegistrationDeskToFlightController implements the CRUD actions for RegistrationDeskToFlight model.
@@ -20,6 +21,21 @@ class RegistrationDeskToFlightController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'index',
+                            'create',
+                            'update',
+                            'delete',
+                        ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -35,30 +51,19 @@ class RegistrationDeskToFlightController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => RegistrationDeskToFlight::find(),
-        ]);
+        $searchModel = new RegistrationDeskToFlightSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single RegistrationDeskToFlight model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * Creates a new RegistrationDeskToFlight model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      * @return mixed
      */
     public function actionCreate()
@@ -66,12 +71,22 @@ class RegistrationDeskToFlightController extends Controller
         $model = new RegistrationDeskToFlight();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Даний запис успішно збережено. Ви можете приступити до його редагування.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Нова інформація про те яку реєстраційну стійку в якому польоті використовується була успішно збережена під кодом запису \'' . $model->id . '\',.');
+
+                return $this->redirect(['index']);
+
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -85,12 +100,21 @@ class RegistrationDeskToFlightController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+            if (Yii::$app->request->post('continueEdit') !== null) {
+                Yii::$app->session->setFlash('success', 'Внесені вами зміни у цьому записі були успішно збережені.');
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Внесені вами зміни у записі під кодом запису \''.$model->id.'\', були успішно збережені.');
+
+                return $this->redirect(['index']);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -101,7 +125,13 @@ class RegistrationDeskToFlightController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $zm = $model->id;
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Запис, що зберігався під кодом \''.$zm.'\' було успішно видалено.');
+        }
 
         return $this->redirect(['index']);
     }
@@ -118,7 +148,7 @@ class RegistrationDeskToFlightController extends Controller
         if (($model = RegistrationDeskToFlight::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException('Запитуваного запису не існує.');
         }
     }
 }
